@@ -16,15 +16,17 @@ class Drum:
 
     The drum cage consists of 27 bars where each bar has 2 movable lugs. The
     lugs can be slid into positions numbered 1-6 and/or 2 neutral positions
-    numbered 0.  As the drum rotates all 27 bars have a chance for their lugs to
-    interact with the effective pins on the 6 key wheels. As each bar rotates
-    past the effective pins on the 6 key wheels, if one or both lugs come into
-    contact with any wheel's effective pins, the bar will quickly shift left.
-    This causes the indicator disk to rotate once, thus causing the substitution
-    cipher for the selected letter to change. Thus the drum, along with the key
-    wheels, acts as a pseudo-random number generator, generating a number
-    between 0 and 27, inclusive. Thus number is used to select which
-    substitution cipher will be used for the current operator selected letter.
+    numbered 0. As the drum rotates all 27 bars have a chance for their lugs to
+    interact with 6 guide arms (one for each key wheel), which may or may not be
+    in position. The guide arms' positioning are controlled by the effective
+    pins on the six key wheels. As each bar rotates past the 6 guide arms for
+    each key wheel, if one or both lugs come into contact with a guide arm, the
+    bar will quickly shift left. This causes the indicator disk to rotate once,
+    thus causing the substitution cipher for the selected letter to change. Thus
+    the drum, along with the key wheels, acts as a pseudo-random number
+    generator, generating a number between 0 and 27, inclusive. Thus number is
+    used to select which substitution cipher will be used for the current
+    operator selected letter.
 
     Internally the bars are represented as a list of 1 or 2 tuples, with one
     entry for each bar that has 1 or more lugs not in neutral positions.  Bars
