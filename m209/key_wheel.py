@@ -57,7 +57,7 @@ class KeyWheel:
     def set_pins(self, effective_pins):
         """Sets which pins are effective.
 
-        effective_pins - must be an iterable of letters whose pins are slide to
+        effective_pins - must be an iterable of letters whose pins are slid to
         the "effective" position (to the right). Letters not appearing in this
         sequence are considered to be in the "ineffective" position (to the
         left). If None or empty, all pins are set to be ineffective.
