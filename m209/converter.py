@@ -62,7 +62,7 @@ class M209:
         If lug_list is passed as a string, it is assumed to be in key list
         format. That is, it must consist of at most 27 whitespace separated pairs
         of integers separated by dashes. For example:
-                '1-0 2-0 2-0 0-3 0-5 0-5 0-6 2-4 3-6'
+                '1-0 2-0 2-0 0-3 0-5 0-5 0-5 0-6 2-4 3-6'
 
         Each integer pair must be in the form 'm-n' where m & n are integers
         between 0 and 6, inclusive. Each integer represents a lug position where
@@ -73,6 +73,15 @@ class M209:
         bars have both lugs in the neutral (0) positions.
 
         Order in a list or string doesn't matter.
+
+        An alternate shortcut notation is also supported:
+                '1-0 2-0*2 0-3 0-5*3 0-6 2-4 3-6'
+
+        Any pair that is suffixed by '*k', where k is a positive integer, means
+        there are k copies of the preceeding lug pair combination. In other
+        words, these two strings describe identical drum configurations:
+                '2-4 2-4 2-4 0-1 0-1'
+                '2-4*3 0-1*2'
 
         """
         if isinstance(lug_list, str):
@@ -96,7 +105,7 @@ class M209:
             for kw in self.key_wheels:
                 kw.rotate()
 
-            self.letter_count += 1
+            self.letter_counter += 1
 
         if group:
             s = ' '.join(''.join(ciphertext[i:i+5]) for i in range(0,
@@ -110,7 +119,7 @@ class M209:
 if __name__ == '__main__':
 
     m209 = M209()
-    m209.set_drum_lugs('1-0 2-0 2-0 2-0 2-0 0-3 0-4 0-4 0-4 0-5 0-5 0-5 0-6 0-6 0-6 0-6 0-6 0-6 0-6 0-6 0-6 0-6 0-6 2-5 2-6 3-4 4-5')
+    m209.set_drum_lugs('1-0 2-0*4 0-3 0-4*3 0-5*3 0-6*11 2-5 2-6 3-4 4-5')
     m209.set_pins(0, 'BFJKLOSTUWXZ')
     m209.set_pins(1, 'ABDJKLMORTUV')
     m209.set_pins(2, 'EHJKNPQRSX')
