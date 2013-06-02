@@ -81,6 +81,18 @@ class DrumTestCase(unittest.TestCase):
         key_list = "2-0" * (Drum.NUM_BARS + 1)
         self.assertRaises(DrumError, Drum.from_key_list, key_list)
 
+        key_list = "2-0* 1-0 1-0 4-4 2-3"
+        self.assertRaises(DrumError, Drum.from_key_list, key_list)
+
+        key_list = "2-0 1-0*-3 1-0 4-4 2-3"
+        self.assertRaises(DrumError, Drum.from_key_list, key_list)
+
+        key_list = "2-0 1-0*-3 1-0 4-4 2*3"
+        self.assertRaises(DrumError, Drum.from_key_list, key_list)
+
+        key_list = "2-0*10 1-0*2 4-4*10 1-6*6"
+        self.assertRaises(DrumError, Drum.from_key_list, key_list)
+
     def test_valid_key_list(self):
         key_list = "0-6 1-4 2-5"
         drum = Drum.from_key_list(key_list)
@@ -88,9 +100,12 @@ class DrumTestCase(unittest.TestCase):
 
         key_list = "2-4 " + ("0-6 1-4 " * 13).rstrip()
         drum = Drum.from_key_list(key_list)
-
         bars = [(1, 3)] + [(5, ), (0, 3)] * 13
         self.assertEqual(bars, drum.bars)
+
+        key_list = "2-4 0-6*13 1-4*13"
+        drum = Drum.from_key_list(key_list)
+        self.assertEqual(sorted(bars), sorted(drum.bars))
 
     def test_rotate(self):
         # These are just simple tests to flush out syntax errors, etc. Higher

@@ -18,7 +18,7 @@ class Drum:
     lugs can be slid into positions numbered 1-6 and/or 2 neutral positions
     numbered 0. As the drum rotates all 27 bars have a chance for their lugs to
     interact with 6 guide arms (one for each key wheel), which may or may not be
-    in position. The guide arms' positioning are controlled by the effective
+    in position. The positioning of the guide arms are controlled by the effective
     pins on the six key wheels. As each bar rotates past the 6 guide arms for
     each key wheel, if one or both lugs come into contact with a guide arm, the
     bar will quickly shift left. This causes the indicator disk to rotate once,
@@ -62,33 +62,37 @@ class Drum:
     @classmethod
     def from_key_list(cls, lug_list):
         """Creates a Drum instance from a string that might be found on a key
-        list. The must consist of at most 27 whitespace separated pairs of
-        integers separated by dashes. For example:
-                '1-0 2-0 2-0 0-3 0-5 0-5 0-6 2-4 3-6'
-
-        Each integer pair must be in the form 'm-n' where m & n are integers
-        between 0 and 6, inclusive. Each integer represents a lug position where
-        0 is a neutral position, and 1-6 correspond to key wheel positions. If
-        m & n are both non-zero, they cannot be equal.
-
-        If a string has less than 27 pairs of integers, it is assumed all
-        remaining bars have both lugs in the neutral (0) positions.
+        list. See the description of the M209.set_drum_lugs() method for the
+        format of the lug_list string argument.
 
         """
         bars = []
         lug_list = lug_list.split()
         for lug_pair in lug_list:
+
+            repeat = 1
+            pair = lug_pair
             try:
-                m, n = [int(x) for x in lug_pair.split('-')]
+                if '*' in lug_pair:
+                    pair, repeat = lug_pair.split('*')
+                    repeat = int(repeat)
+                    if repeat < 0:
+                        raise ValueError
+
+                m, n = [int(x) for x in pair.split('-')]
             except ValueError:
                 raise DrumError("Invalid lug pair {}".format(lug_pair))
 
+            t = None
             if m and n:
-                bars.append((m - 1, n - 1))
+                t = (m - 1, n - 1)
             elif m and not n:
-                bars.append((m - 1, ))
+                t = (m - 1, )
             elif not m and n:
-                bars.append((n - 1, ))
+                t = (n - 1, )
+
+            for i in range(repeat):
+                bars.append(t)
 
         return cls(lug_list=bars)
 
