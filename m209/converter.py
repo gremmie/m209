@@ -90,6 +90,15 @@ class M209:
             drum = Drum(lug_list)
         self.drum = drum
 
+    def set_key_wheels(self, s):
+        """Set the key wheels from left to right to the six letter string s."""
+
+        if len(s) != 6:
+            raise M209Error("Invalid key wheels setting length")
+
+        for n in range(6):
+            self.key_wheels[n].set_pos(s[n])
+
     def encrypt(self, plaintext, group=True, spaces=True):
         """Performs an encrypt operation on the given plaintext and returns
         the ciphertext as a string.
@@ -181,13 +190,6 @@ if __name__ == '__main__':
     print(m209.encrypt(pt))
 
     ct = 'OZGPK AFVAJ JYRZW LRJEG MOVLU M'
-    m209 = M209()
-    m209.set_drum_lugs('1-0 2-0*4 0-3 0-4*3 0-5*3 0-6*11 2-5 2-6 3-4 4-5')
-    m209.set_pins(0, 'BFJKLOSTUWXZ')
-    m209.set_pins(1, 'ABDJKLMORTUV')
-    m209.set_pins(2, 'EHJKNPQRSX')
-    m209.set_pins(3, 'ABCHIJLMPQR')
-    m209.set_pins(4, 'BCDGJLNOPQS')
-    m209.set_pins(5, 'AEFHIJP')
+    m209.set_key_wheels('AAAAAA')
     print(m209.decrypt(ct))
 
