@@ -37,6 +37,15 @@ class M209TestCase(unittest.TestCase):
         self.assertRaises(M209Error, m.set_pins, 7, pins)
         self.assertRaises(M209Error, m.set_pins, 100, pins)
 
+    def test_invald_set_all_pins(self):
+        m = M209()
+        self.assertRaises(M209Error, m.set_all_pins, 'A')
+
+        bad_pins1 = AA_PIN_LIST * 2
+        self.assertRaises(M209Error, m.set_all_pins, bad_pins1)
+        bad_pins2 = ['ABCD', 'EFGH', 'XYZ']
+        self.assertRaises(M209Error, m.set_all_pins, bad_pins2)
+
     def letter_check(self, lugs, pin_list, check):
         """Generic letter check routine"""
 
@@ -46,8 +55,7 @@ class M209TestCase(unittest.TestCase):
         m = M209()
         m.set_drum_lugs(lugs)
 
-        for n, pins in enumerate(pin_list):
-            m.set_pins(n, pins)
+        m.set_all_pins(pin_list)
 
         result = m.encrypt(pt)
 
@@ -87,8 +95,7 @@ class M209TestCase(unittest.TestCase):
 
         m = M209()
         m.set_drum_lugs(AA_LUGS)
-        for n, pins in enumerate(AA_PIN_LIST):
-            m.set_pins(n, pins)
+        m.set_all_pins(AA_PIN_LIST)
 
         result = m.encrypt('A' * 26, group=False)
         expected = AA_CHECK.replace(' ', '')
@@ -103,8 +110,7 @@ class M209TestCase(unittest.TestCase):
 
         m = M209()
         m.set_drum_lugs(AA_LUGS)
-        for n, pins in enumerate(AA_PIN_LIST):
-            m.set_pins(n, pins)
+        m.set_all_pins(AA_PIN_LIST)
 
         wheels = 'YGXREL'
         m.set_key_wheels(wheels)
@@ -127,8 +133,7 @@ class M209TestCase(unittest.TestCase):
 
         m = M209()
         m.set_drum_lugs(AA_LUGS)
-        for n, pins in enumerate(AA_PIN_LIST):
-            m.set_pins(n, pins)
+        m.set_all_pins(AA_PIN_LIST)
 
         pt = 'ATTACK AT DAWN'
         wheels = 'YGXREL'
@@ -139,3 +144,24 @@ class M209TestCase(unittest.TestCase):
         result = m.decrypt(ct, z_sub=False)
 
         self.assertEqual(pt.replace(' ', 'Z'), result)
+
+    def test_set_pins_vs_all_pins(self):
+
+        m1 = M209()
+        m1.set_drum_lugs(AA_LUGS)
+        m1.set_all_pins(AA_PIN_LIST)
+
+        pt = 'ATTACK AT DAWN'
+        wheels = 'YGXREL'
+        m1.set_key_wheels(wheels)
+        ct1 = m1.encrypt(pt)
+
+        m2 = M209()
+        m2.set_drum_lugs(AA_LUGS)
+        for n, pins in enumerate(AA_PIN_LIST):
+            m2.set_pins(n, pins)
+
+        m2.set_key_wheels(wheels)
+        ct2 = m2.encrypt(pt)
+
+        self.assertEqual(ct1, ct2)
