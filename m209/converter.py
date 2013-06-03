@@ -47,6 +47,25 @@ class M209:
             raise M209Error("set_pins(): invalid key wheel index {}".format(n))
         self.key_wheels[n].set_pins(effective_pins)
 
+    def set_all_pins(self, pin_list):
+        """Sets all key wheel pins according to the supplied pin list.
+
+        The pin_list parameter must either be None or a 6-element list
+        where each element is as described by the effective_pins parameter of
+        the set_key_wheel_pins() method. If None, all pins in all key wheels are
+        moved to the ineffective position.
+
+        """
+        if pin_list is None:
+            for kw in self.key_wheels:
+                kw.set_pins(None)
+        else:
+            if len(pin_list) != len(self.key_wheels):
+                raise M209Error("set_all_pins(): invalid pin_list length")
+
+            for kw, pins in zip(self.key_wheels, pin_list):
+                kw.set_pins(pins)
+
     def set_drum_lugs(self, lug_list):
         """Sets the drum lugs according to the given lug_list parameter.
 
