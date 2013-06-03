@@ -175,21 +175,3 @@ class M209:
 
         return CIPHER_TABLE[(ord(c) - ord('A') - count) % 26]
 
-
-if __name__ == '__main__':
-
-    m209 = M209()
-    m209.set_drum_lugs('1-0 2-0*4 0-3 0-4*3 0-5*3 0-6*11 2-5 2-6 3-4 4-5')
-    m209.set_pins(0, 'BFJKLOSTUWXZ')
-    m209.set_pins(1, 'ABDJKLMORTUV')
-    m209.set_pins(2, 'EHJKNPQRSX')
-    m209.set_pins(3, 'ABCHIJLMPQR')
-    m209.set_pins(4, 'BCDGJLNOPQS')
-    m209.set_pins(5, 'AEFHIJP')
-    pt = 'A' * 26
-    print(m209.encrypt(pt))
-
-    ct = 'OZGPK AFVAJ JYRZW LRJEG MOVLU M'
-    m209.set_key_wheels('AAAAAA')
-    print(m209.decrypt(ct))
-
