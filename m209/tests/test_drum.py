@@ -128,3 +128,13 @@ class DrumTestCase(unittest.TestCase):
 
         drum = Drum([(2, 4)] * 10)
         self.assertEqual(10, drum.rotate([False, False, False, False, True, False]))
+
+    def test_to_key_list(self):
+
+        drum = Drum.from_key_list('1-0*5 0-3*3 0-4 0-5*4 0-6*6 1-2 1-5*4 3-4 3-6 5-6')
+        s = drum.to_key_list()
+        self.assertEqual(s, '0-4 0-5*4 0-6*6 1-0*5 1-2 1-5*4 3-0*3 3-4 3-6 5-6')
+
+        s = drum.to_key_list(shortcut=False)
+        self.assertEqual(s, ('0-4 0-5 0-5 0-5 0-5 0-6 0-6 0-6 0-6 0-6 0-6 1-0 '
+            '1-0 1-0 1-0 1-0 1-2 1-5 1-5 1-5 1-5 3-0 3-0 3-0 3-4 3-6 5-6'))
