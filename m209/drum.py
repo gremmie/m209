@@ -4,7 +4,10 @@
 
 """This module contains the Drum class for the M-209 simulation."""
 
+import collections
+
 from . import M209Error
+
 
 class DrumError(M209Error):
     """Exception class for all drum errors"""
@@ -59,6 +62,8 @@ class Drum:
             self.bars = lug_list
             self._validate_bars()
 
+        self.key_list = self.to_key_list()
+
     @classmethod
     def from_key_list(cls, lug_list):
         """Creates a Drum instance from a string that might be found on a key
@@ -95,6 +100,45 @@ class Drum:
                 bars.append(t)
 
         return cls(lug_list=bars)
+
+    def __str__(self):
+        return self.key_list
+
+    def to_key_list(self, shortcut=True):
+        """Returns a key list string representation of the lugs.
+
+        If shortcut is True, the string will contain shortcut notation (e.g.
+        1-2*3), and bars with both lugs in zero-positions will be omitted.
+
+        If shortcut is False, the string will consist of lug pairs for all 27
+        bars.
+
+        """
+        cnt = collections.Counter()
+        for lug_pair in self.bars:
+            if len(lug_pair) == 1:
+                n = lug_pair[0] + 1
+                t = (n, 0) if n < 4 else (0, n)
+            else:
+                m, n = lug_pair[0] + 1, lug_pair[1] + 1
+                t = (m, n) if m < n else (n, m)
+
+            cnt[t] += 1
+
+        bars = sorted(cnt.items())
+        if shortcut:
+            bars = ['{}-{}*{}'.format(p[0][0], p[0][1], p[1]) if p[1] > 1 else (
+                    '{}-{}'.format(p[0][0], p[0][1])) for p in bars]
+        else:
+            bars2 = []
+            for p in bars:
+                for n in range(p[1]):
+                    bars2.append(p[0])
+
+            bars2.extend([(0, 0)] * (27 - len(bars2)))
+            bars = ['{}-{}'.format(p[0], p[1]) for p in bars2]
+
+        return ' '.join(bars)
 
     def rotate(self, pins):
         """Rotate the drum cage a complete revolution and return the number of
