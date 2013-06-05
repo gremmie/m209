@@ -105,3 +105,8 @@ class KeyWheelTestCase(unittest.TestCase):
         for c in letters:
             kw.set_pos(c)
             self.assertEqual(c, kw.display())
+
+    def test_str(self):
+        kw = KeyWheel(string.ascii_uppercase, 'P', 'FGIKOPRSUVWYZ')
+        self.assertEqual(str(kw), ('-A -B -C -D -E F- G- -H I- -J K- -L -M -N '
+                                   'O- P- -Q R- S- -T U- V- W- -X Y- Z-'))
