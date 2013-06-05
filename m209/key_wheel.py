@@ -50,6 +50,15 @@ class KeyWheel:
         # rotational position; 0 means first letter shown to operator
         self.pos = 0
 
+    def __str__(self):
+        parts = []
+        for n, c in enumerate(self.letters):
+            if self.pins[n]:
+                parts.append(c + '-')
+            else:
+                parts.append('-' + c)
+        return ' '.join(parts)
+
     def reset_pins(self):
         """Reset all pins to the ineffective state."""
         self.pins = [False] * self.num_pins
