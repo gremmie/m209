@@ -11,7 +11,7 @@ from ..converter import M209
 
 
 # Data taken from Mark J. Blair's AA key list
-AA_LUGS = '1-0*5 0-3*3 0-4 0-5*4 0-6*6 1-2 1-5*4 3-4 3-6 5-6'
+AA_LUGS = '0-4 0-5*4 0-6*6 1-0*5 1-2 1-5*4 3-0*3 3-4 3-6 5-6'
 
 AA_PIN_LIST = [
     'FGIKOPRSUVWYZ',
@@ -52,13 +52,9 @@ class M209TestCase(unittest.TestCase):
         pt = 'A' * 26
         ct = check
 
-        m = M209()
-        m.set_drum_lugs(lugs)
-
-        m.set_all_pins(pin_list)
+        m = M209(lugs, pin_list)
 
         result = m.encrypt(pt)
-
         self.assertEqual(result, ct)
         self.assertEqual(m.letter_counter, 26)
 
@@ -93,10 +89,7 @@ class M209TestCase(unittest.TestCase):
 
     def test_no_group(self):
 
-        m = M209()
-        m.set_drum_lugs(AA_LUGS)
-        m.set_all_pins(AA_PIN_LIST)
-
+        m = M209(AA_LUGS, AA_PIN_LIST)
         result = m.encrypt('A' * 26, group=False)
         expected = AA_CHECK.replace(' ', '')
         self.assertEqual(result, expected)
@@ -108,9 +101,7 @@ class M209TestCase(unittest.TestCase):
 
     def test_encrypt_spaces(self):
 
-        m = M209()
-        m.set_drum_lugs(AA_LUGS)
-        m.set_all_pins(AA_PIN_LIST)
+        m = M209(AA_LUGS, AA_PIN_LIST)
 
         wheels = 'YGXREL'
         m.set_key_wheels(wheels)
@@ -131,9 +122,7 @@ class M209TestCase(unittest.TestCase):
 
     def test_decrypt_no_z_sub(self):
 
-        m = M209()
-        m.set_drum_lugs(AA_LUGS)
-        m.set_all_pins(AA_PIN_LIST)
+        m = M209(AA_LUGS, AA_PIN_LIST)
 
         pt = 'ATTACK AT DAWN'
         wheels = 'YGXREL'
@@ -147,9 +136,7 @@ class M209TestCase(unittest.TestCase):
 
     def test_set_pins_vs_all_pins(self):
 
-        m1 = M209()
-        m1.set_drum_lugs(AA_LUGS)
-        m1.set_all_pins(AA_PIN_LIST)
+        m1 = M209(AA_LUGS, AA_PIN_LIST)
 
         pt = 'ATTACK AT DAWN'
         wheels = 'YGXREL'
@@ -165,3 +152,11 @@ class M209TestCase(unittest.TestCase):
         ct2 = m2.encrypt(pt)
 
         self.assertEqual(ct1, ct2)
+
+    def test_get_settings(self):
+
+        m = M209(AA_LUGS, AA_PIN_LIST)
+        settings = m.get_settings()
+
+        self.assertEqual(settings.lugs, AA_LUGS)
+        self.assertEqual(settings.pin_list, AA_PIN_LIST)
