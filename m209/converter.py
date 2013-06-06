@@ -6,6 +6,7 @@
 assemble a complete M-209 converter.
 
 """
+from collections import namedtuple
 import string
 
 from . import M209Error
@@ -17,19 +18,19 @@ M209_ALPHABET = set(string.ascii_uppercase)
 CIPHER_TABLE = list(reversed(string.ascii_uppercase))
 
 
+M209Settings = namedtuple('M209Settings', ['lugs', 'pin_list'])
+
 class M209:
     """The M209 class is the top-level class in the M-209 simulation. It
     aggregates key wheels and a drum and orchestrates their movements to provide
     encrypt and decrypt functions for the operator.
 
     """
-    def __init__(self):
-        """Build a M209 instance with all pins in the ineffective state and all
-        drum lugs in neutral positions.
-
-        """
+    def __init__(self, lugs=None, pin_list=None):
+        """Build a M209 instance with the given lug & pin settings."""
         self.key_wheels = [KeyWheel(*args) for args in KEY_WHEEL_DATA]
-        self.drum = Drum()
+        self.set_drum_lugs(lugs)
+        self.set_all_pins(pin_list)
         self.letter_counter = 0
 
     def set_pins(self, n, effective_pins):
@@ -117,6 +118,12 @@ class M209:
 
         for n in range(6):
             self.key_wheels[n].set_pos(s[n])
+
+    def get_settings(self):
+        """Returns the current settings as a M209Settings named tuple."""
+
+        return M209Settings(lugs=self.drum.key_list,
+                        pin_list=[kw.effective_pins for kw in self.key_wheels])
 
     def encrypt(self, plaintext, group=True, spaces=True):
         """Performs an encrypt operation on the given plaintext and returns

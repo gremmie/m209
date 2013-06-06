@@ -62,6 +62,7 @@ class KeyWheel:
     def reset_pins(self):
         """Reset all pins to the ineffective state."""
         self.pins = [False] * self.num_pins
+        self.effective_pins = ''
 
     def set_pins(self, effective_pins):
         """Sets which pins are effective.
@@ -73,12 +74,17 @@ class KeyWheel:
 
         """
         self.reset_pins()
+        if not effective_pins:
+            return
+
         for letter in effective_pins:
             try:
                 n = self.letter_offsets[letter]
             except KeyError:
                 raise KeyWheelError("Invalid pin: {}".format(letter))
             self.pins[n] = True
+
+        self.effective_pins = effective_pins
 
     def rotate(self, steps=1):
         """Rotate the key wheel the given number of steps."""
