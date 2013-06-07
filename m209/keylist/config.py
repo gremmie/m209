@@ -38,15 +38,15 @@ from .key_list import KeyList
 WHEELS = ['wheel{}'.format(n) for n in range(1, 7)]
 
 
-def read_key_list(fp, indicator):
-    """Reads from fp, which must be an iterable that yields unicode strings.
+def read_key_list(fname, indicator):
+    """Reads key list information from the file given by fname.
 
     Searches the config file for the key list with the given indicator. If
     found, returns a KeyList object. Returns None if not found.
 
     """
     config = configparser.ConfigParser(interpolation=None)
-    config.read_file(fp)
+    config.read(fname)
 
     if indicator not in config.sections():
         return None
@@ -59,5 +59,31 @@ def read_key_list(fp, indicator):
             letter_check=section['check'])
 
 
-def write_key_list(fp, key_list):
-    pass
+def write_key_list(fname, key_list):
+    """Updates the file named by fname with the given key_list.
+
+    If the file doesn't exist, it is created and the key_list is written to it.
+
+    If the file already exists, it is read and searched for a section that
+    matches the key_list indicator name. If found, this section is updated and
+    the file is written back out. If the section is not found, one for the
+    key_list is added and the file is written out.
+
+    """
+    config = configparser.ConfigParser(interpolation=None)
+    config.read(fname)
+
+    # If the section for this key list doesn't exist, add one
+    if not config.has_section(key_list.indicator):
+        config.add_section(key_list.indicator)
+
+    # Now update it
+    section = config[key_list.indicator]
+    section['lugs'] = key_list.lugs
+    for n, wheel in enumerate(WHEELS):
+        section[wheel] = key_list.pin_list[n]
+    section['check'] = key_list.letter_check
+
+    # Write the file
+    with open(fname, 'w') as fp:
+        config.write(fp)
