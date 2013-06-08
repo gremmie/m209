@@ -7,7 +7,7 @@
 import unittest
 
 from ..keylist import KeyList
-from ..procedure import StdEncryptProcedure
+from ..procedure import StdProcedure
 
 
 PLAINTEXT = 'ATTACK AT DAWN'
@@ -28,8 +28,19 @@ class ProcedureTestCase(unittest.TestCase):
                         'ACDFHIMN'
                     ],
                     letter_check='TNMYS CRMKK UHLKW LDQHM RQOLW R')
-        self.proc = StdEncryptProcedure(key_list=self.fm)
+        self.proc = StdProcedure(key_list=self.fm)
 
     def test_encrypt(self):
         result = self.proc.encrypt(PLAINTEXT, ext_msg_ind='ABCDEF', sys_ind='G')
         self.assertEqual(result, CIPHERTEXT)
+
+    def test_decrypt(self):
+        result = self.proc.set_decrypt_message(CIPHERTEXT)
+
+        self.assertEqual(result.sys_ind, 'G')
+        self.assertEqual(result.ext_msg_ind, 'ABCDEF')
+        self.assertEqual(result.key_list_ind, 'FM')
+        self.assertEqual(result.ciphertext, CIPHERTEXT[12:29])
+
+        plaintext = self.proc.decrypt()
+        self.assertEqual(plaintext[:len(PLAINTEXT)], PLAINTEXT)
