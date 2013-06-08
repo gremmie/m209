@@ -18,8 +18,8 @@ class ProcedureTestCase(unittest.TestCase):
 
     def setUp(self):
         self.fm = KeyList(indicator="FM",
-                    lugs = '1-0 2-0*8 0-3*7 0-4*5 0-5*2 1-5 1-6 3-4 4-5',
-                    pin_list = [
+                    lugs='1-0 2-0*8 0-3*7 0-4*5 0-5*2 1-5 1-6 3-4 4-5',
+                    pin_list=[
                         'BCEJOPSTUVXY',
                         'ACDHJLMNOQRUYZ',
                         'AEHJLOQRUV',
@@ -27,7 +27,7 @@ class ProcedureTestCase(unittest.TestCase):
                         'CEHIJLNPS',
                         'ACDFHIMN'
                     ],
-                    letter_check = 'TNMYS CRMKK UHLKW LDQHM RQOLW R')
+                    letter_check='TNMYS CRMKK UHLKW LDQHM RQOLW R')
         self.proc = StdEncryptProcedure(key_list=self.fm)
 
     def test_encrypt(self):
