@@ -11,10 +11,11 @@ import string
 
 from . import M209Error
 from .data import KEY_WHEEL_DATA
-from .key_wheel import KeyWheel
+from .key_wheel import KeyWheel, KeyWheelError
 from .drum import Drum
 
-M209_ALPHABET = set(string.ascii_uppercase)
+M209_ALPHABET_LIST = string.ascii_uppercase
+M209_ALPHABET_SET = set(string.ascii_uppercase)
 CIPHER_TABLE = list(reversed(string.ascii_uppercase))
 
 
@@ -110,6 +111,18 @@ class M209:
             drum = Drum(lug_list)
         self.drum = drum
 
+    def set_key_wheel(self, n, c):
+        """Set key wheel n to the letter c, where n is 0-5, inclusive.
+
+        Key wheel 0 is the leftmost key wheel, and 5 is the rightmost.
+
+        May raise KeyWheelError if c is not valid for key wheel n.
+
+        """
+        if not (0 <= n < len(self.key_wheels)):
+            raise M209Error("set_key_wheel(): invalid key wheel index {}".format(n))
+        self.key_wheels[n].set_pos(c)
+
     def set_key_wheels(self, s):
         """Set the key wheels from left to right to the six letter string s."""
 
@@ -117,7 +130,18 @@ class M209:
             raise M209Error("Invalid key wheels setting length")
 
         for n in range(6):
-            self.key_wheels[n].set_pos(s[n])
+            try:
+                self.key_wheels[n].set_pos(s[n])
+            except KeyWheelError as ex:
+                raise KeyWheelError('wheel #{}: {}'.format(n, ex))
+
+    def set_random_key_wheels(self):
+        """Sets the 6 key wheels to random letters and returns the letters as
+        a string.
+
+        """
+        letters = [kw.set_random() for kw in self.key_wheels]
+        return ''.join(letters)
 
     def get_settings(self):
         """Returns the current settings as a M209Settings named tuple."""
@@ -188,7 +212,7 @@ class M209:
         the internal substitution table.
 
         """
-        if c not in M209_ALPHABET:
+        if c not in M209_ALPHABET_SET:
             raise M209Error("Illegal char: {}".format(c))
 
         pins = [kw.is_effective() for kw in self.key_wheels]

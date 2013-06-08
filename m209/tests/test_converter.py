@@ -87,6 +87,23 @@ class M209TestCase(unittest.TestCase):
         check = 'OZGPK AFVAJ JYRZW LRJEG MOVLU M'
         self.letter_check(lugs, pin_list, check)
 
+    def test_fm_letter_check(self):
+        """See if we can pass a letter check using Mark J. Blair's FM key list."""
+
+        lugs = '1-0 2-0*8 0-3*7 0-4*5 0-5*2 1-5 1-6 3-4 4-5'
+
+        pin_list = [
+            'BCEJOPSTUVXY',
+            'ACDHJLMNOQRUYZ',
+            'AEHJLOQRUV',
+            'DFGILMNPQS',
+            'CEHIJLNPS',
+            'ACDFHIMN'
+        ]
+
+        check = 'TNMYS CRMKK UHLKW LDQHM RQOLW R'
+        self.letter_check(lugs, pin_list, check)
+
     def test_no_group(self):
 
         m = M209(AA_LUGS, AA_PIN_LIST)
