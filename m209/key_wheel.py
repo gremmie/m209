@@ -6,7 +6,10 @@
 simulation.
 
 """
+import random
+
 from . import M209Error
+
 
 class KeyWheelError(M209Error):
     """Exception class for all key wheel errors"""
@@ -120,3 +123,13 @@ class KeyWheel:
             self.pos = self.letter_offsets[c]
         except KeyError:
             raise KeyWheelError("Invalid position {}".format(c))
+
+    def set_random(self):
+        """Sets the position of the key wheel to a random letter.
+
+        The random letter is returned as a string.
+
+        """
+        c = random.choice(self.letters)
+        self.set_pos(c)
+        return c
