@@ -13,6 +13,7 @@ from . import M209Error
 from .data import KEY_WHEEL_DATA
 from .key_wheel import KeyWheel, KeyWheelError
 from .drum import Drum
+from .utils import group as group_text
 
 M209_ALPHABET_LIST = string.ascii_uppercase
 M209_ALPHABET_SET = set(string.ascii_uppercase)
@@ -168,8 +169,7 @@ class M209:
             ciphertext.append(self._cipher(p))
 
         if group:
-            s = ' '.join(''.join(ciphertext[i:i+5]) for i in range(0,
-                len(ciphertext), 5))
+            s = group_text(ciphertext)
         else:
             s = ''.join(ciphertext)
         return s
