@@ -7,8 +7,7 @@
 import unittest
 
 from ..keylist import KeyList
-from ..procedure import encrypt
-from ..converter import M209
+from ..procedure import StdEncryptProcedure
 
 
 PLAINTEXT = 'ATTACK AT DAWN'
@@ -29,11 +28,8 @@ class ProcedureTestCase(unittest.TestCase):
                         'ACDFHIMN'
                     ],
                     letter_check = 'TNMYS CRMKK UHLKW LDQHM RQOLW R')
-        self.m_209 = M209()
+        self.proc = StdEncryptProcedure(key_list=self.fm)
 
     def test_encrypt(self):
-
-        result = encrypt(self.m_209, PLAINTEXT, key_list=self.fm,
-                ext_msg_ind='ABCDEF', sys_ind='G')
-
+        result = self.proc.encrypt(PLAINTEXT, ext_msg_ind='ABCDEF', sys_ind='G')
         self.assertEqual(result, CIPHERTEXT)
