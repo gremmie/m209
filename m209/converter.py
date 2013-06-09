@@ -13,7 +13,7 @@ from . import M209Error
 from .data import KEY_WHEEL_DATA
 from .key_wheel import KeyWheel, KeyWheelError
 from .drum import Drum
-from .utils import group as group_text
+from .utils import group_text
 
 M209_ALPHABET_LIST = string.ascii_uppercase
 M209_ALPHABET_SET = set(string.ascii_uppercase)

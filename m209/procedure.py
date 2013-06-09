@@ -25,7 +25,7 @@ import re
 from . import M209Error
 from .converter import M209, M209_ALPHABET_SET, M209_ALPHABET_LIST
 from .key_wheel import KeyWheelError
-from .utils import group as group_text
+from .utils import group_text
 
 
 class ProcedureError(M209Error):
