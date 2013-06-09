@@ -5,7 +5,7 @@
 """This module contains various utility functions."""
 
 
-def group(text, n=5):
+def group_text(text, n=5):
     """Groups the given text into n-letter groups separated by spaces."""
 
     return ' '.join(''.join(text[i:i+n]) for i in range(0, len(text), n))
