@@ -72,9 +72,14 @@ class StdProcedure:
 
         if key_list:
             self.set_key_list(key_list)
+        else:
+            self.key_list = None
 
     def get_key_list(self):
-        """Returns the currently installed key list object."""
+        """Returns the currently installed key list object or None if one has
+        not been set.
+
+        """
         return self.key_list
 
     def set_key_list(self, key_list):
@@ -90,16 +95,13 @@ class StdProcedure:
         self.m_209.set_drum_lugs(key_list.lugs)
         self.m_209.set_all_pins(key_list.pin_list)
 
-    def encrypt(self, plaintext, group=True, spaces=True, ext_msg_ind=None, sys_ind=None):
+    def encrypt(self, plaintext, spaces=True, ext_msg_ind=None, sys_ind=None):
         """Encrypts a plaintext message using standard procedure. The encrypted text
         with the required message indicators are returned as one string.
 
         The encrypt function accepts these parameters:
 
         plaintext - Input string of text to be encrypted
-        group - If True, the resulting encrypted text will be grouped into 5-letter
-            groups with a space between each group. If False, no spaces will be
-            present in the output.
         spaces - If True, space characters in the input plaintext will automatically
             be replaced with 'Z' characters before encrypting.
         ext_msg_ind - This is the external message indicator, which, if supplied,
@@ -124,8 +126,8 @@ class StdProcedure:
             try:
                 self.m_209.set_key_wheels(ext_msg_ind)
             except M209Error as ex:
-                raise M209Error("invalid external message indicator {} - {}".format(
-                    ext_msg_ind, ex))
+                raise ProcedureError(
+                    "invalid external message indicator {} - {}".format(ext_msg_ind, ex))
         else:
             ext_msg_ind = self.m_209.set_random_key_wheels()
 
@@ -146,17 +148,17 @@ class StdProcedure:
         self._set_int_message_indicator(int_msg_ind)
 
         # Now encipher the message on the M209
-        ciphertext = self.m_209.encrypt(plaintext, group=group, spaces=spaces)
+        ciphertext = self.m_209.encrypt(plaintext, group=True, spaces=spaces)
 
-        # If we are grouping, and the final group in the ciphertext has less than
-        # 5 letters, pad with X's to make a complete group:
-        if group:
-            total_len = len(ciphertext)
-            num_groups = total_len // 5
-            num_spaces = num_groups - 1 if num_groups >= 2 else 0
-            x_count = 5 - (total_len - num_spaces) % 5
-            if 0 < x_count < 5:
-                ciphertext = ciphertext + 'X' * x_count
+        # If the final group in the ciphertext has less than 5 letters, pad with
+        # X's to make a complete group:
+
+        total_len = len(ciphertext)
+        num_groups = total_len // 5
+        num_spaces = num_groups - 1 if num_groups >= 2 else 0
+        x_count = 5 - (total_len - num_spaces) % 5
+        if 0 < x_count < 5:
+            ciphertext = ciphertext + 'X' * x_count
 
         # Add the message indicators to pad each end of the message
 
@@ -165,9 +167,8 @@ class StdProcedure:
 
         msg_parts = [pad1, pad2, ciphertext, pad1, pad2]
 
-        # Assemble the final message; group if requested
-        sep = ' ' if group else ''
-        return sep.join(msg_parts)
+        # Assemble the final message
+        return ' '.join(msg_parts)
 
     def set_decrypt_message(self, msg):
         """Prepare to decrypt the supplied message.
@@ -210,13 +211,9 @@ class StdProcedure:
 
         return self.decrypt_params
 
-    def decrypt(self, z_sub=True):
+    def decrypt(self):
         """Decrypt the message set in a previous set_decrypt_message() call. The
         resulting plaintext is returned as a string.
-
-        If z_sub is True, 'Z' characters in the output plaintext will be
-        replaced by space characters, just like an actual M-209. If z_sub is
-        False, no such substitution will occur.
 
         A ProcedureError will be raised if the procedure instance has not been
         configured with the required key list.
@@ -246,7 +243,7 @@ class StdProcedure:
 
         self.m_209.letter_counter = 0
         plaintext = self.m_209.decrypt(self.decrypt_params.ciphertext,
-                                       spaces=True, z_sub=z_sub)
+                                       spaces=True, z_sub=True)
         return plaintext
 
     def _set_int_message_indicator(self, indicator):
