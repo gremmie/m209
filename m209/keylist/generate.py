@@ -40,7 +40,7 @@ def generate_key_list(indicator):
     """
     lugs = generate_lugs()
     pin_list = generate_pin_list()
-    letter_check = generate_letter_check(lugs, pin_list)
+    letter_check = generate_letter_check(lugs=lugs, pin_list=pin_list)
 
     return KeyList(indicator=indicator, lugs=lugs, pin_list=pin_list,
             letter_check=letter_check)
@@ -73,7 +73,7 @@ def generate_pin_list():
     return pin_list
 
 
-def generate_letter_check(pin_list, lugs):
+def generate_letter_check(lugs, pin_list):
     """Return a letter check string for the given pin list and lug settings."""
 
     m_209 = M209(lugs, pin_list)
