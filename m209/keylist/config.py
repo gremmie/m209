@@ -2,7 +2,7 @@
 # This file is part of m209, the M-209 simulation.
 # m209 is released under the MIT License (see LICENSE.txt).
 
-"""This module contains routes to read & write key lists in config (aka INI)
+"""This module contains routines to read & write key lists in config (aka INI)
 file format.
 
 In the config file format, multiple key lists are stored in one file. Each key

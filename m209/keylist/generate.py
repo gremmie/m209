@@ -2,7 +2,7 @@
 # This file is part of m209, the M-209 simulation.
 # m209 is released under the MIT License (see LICENSE.txt).
 
-"""This module contains routes to generate key lists."""
+"""This module contains routines to generate key lists."""
 
 import collections
 import random
