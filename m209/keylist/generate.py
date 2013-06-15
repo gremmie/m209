@@ -95,10 +95,27 @@ def pin_list_check(pin_list):
     if not (0.4 <= ratio <= 0.6):
         return False
 
-    # Check for more than 6 consecutive effective pins
-    # TODO
+    # Check for more than 6 consecutive effective pins on a wheel
+    # TODO: not all letters are on every wheel
 
-    # Check for more than 6 consecutive ineffective pins
-    # TODO
+    for pins in pin_list:
+        run = 0
+        for i in range(len(pins) - 1):
+            if ord(pins[i]) + 1 == ord(pins[i + 1]):
+                run = 2 if run == 0 else run + 1
+            else:
+                run = 0
+            if run >= 7:
+                return False
+
+    # Check for more than 6 consecutive ineffective pins on a wheel
+    # TODO: not all letters are on every wheel
+
+    for pins in pin_list:
+        x = 'A'
+        for y in pins:
+            if ord(y) - ord(x) >= 8:
+                return False
+            x = y
 
     return True
