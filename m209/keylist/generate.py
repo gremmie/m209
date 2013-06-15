@@ -5,6 +5,7 @@
 """This module contains routines to generate key lists."""
 
 import collections
+import itertools
 import random
 
 from .key_list import KeyList
@@ -19,6 +20,26 @@ MAX_ATTEMPTS = 128
 
 # Total number of pins on all 6 wheels:
 TOTAL_PINS = sum(len(letters) for letters, _ in KEY_WHEEL_DATA)
+
+# CONSEC_MAPS is a list of dicts, one for each key wheel. Each dict key is
+# a letter. The value is the string of 7 consecutive letters that would make the
+# key setting invalid according to Army procedure. The consecutive string
+# accounts for the letters on the key wheel and wrap-around.
+
+def build_consec_map(letters):
+    """Builds a "consecutive map" for the list of letters on a key wheel. This
+    is used to validate a pin list to make sure there are not too many effective
+    or ineffective pins in a consecutive sequence.
+
+    """
+    deque = collections.deque(letters)
+    consec = {}
+    for c in letters:
+        consec[c] = ''.join(itertools.islice(deque, 0, 7))
+        deque.rotate(-1)
+    return consec
+
+CONSEC_MAPS = [build_consec_map(letters) for letters, _ in KEY_WHEEL_DATA]
 
 
 def generate_key_list(indicator):
@@ -96,26 +117,43 @@ def pin_list_check(pin_list):
         return False
 
     # Check for more than 6 consecutive effective pins on a wheel
-    # TODO: not all letters are on every wheel
 
-    for pins in pin_list:
-        run = 0
-        for i in range(len(pins) - 1):
-            if ord(pins[i]) + 1 == ord(pins[i + 1]):
-                run = 2 if run == 0 else run + 1
-            else:
-                run = 0
-            if run >= 7:
-                return False
+    for n, pins in enumerate(pin_list):
+        if check_consecutive(n, pins):
+            return False
 
     # Check for more than 6 consecutive ineffective pins on a wheel
-    # TODO: not all letters are on every wheel
 
-    for pins in pin_list:
-        x = 'A'
-        for y in pins:
-            if ord(y) - ord(x) >= 8:
-                return False
-            x = y
+    for n, pins in enumerate(pin_list):
+        if check_consecutive(n, invert_pins(n, pins)):
+            return False
 
     return True
+
+
+def check_consecutive(n, pins):
+    """Check for consecutive pins on key wheel n. The pins parameter must be
+    a string of the pins that are effective. Returns True if there are more than
+    6 consecutive effective pins and False otherwise.
+
+    """
+    consec = CONSEC_MAPS[n]
+    deque = collections.deque(pins)
+    for c in pins:
+        if consec[c] == ''.join(itertools.islice(deque, 0, 7)):
+            return True
+        deque.rotate(-1)
+    return False
+
+
+def invert_pins(n, pins):
+    """Given a string of effective pins on key wheel n, return a string where
+    all the effective pins are pushed to the left and all the ineffective pins
+    are pushed to the right, thus flipping which pins are effective
+    / ineffective.
+
+    """
+    all_letters = set(KEY_WHEEL_DATA[n][0])
+    effective = set(pins)
+    inverse = sorted(all_letters - effective)
+    return ''.join(inverse)

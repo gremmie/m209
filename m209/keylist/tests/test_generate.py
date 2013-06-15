@@ -81,7 +81,7 @@ class GenerateTestCase(unittest.TestCase):
         self.assertFalse(pin_list_check(make_pin_list(100)))
         self.assertFalse(pin_list_check(make_pin_list(125)))
 
-    def test_consecutive_effective_pins(self):
+    def test_consecutive_effective_pins_0(self):
 
         pin_list = self.valid_pin_list
         pin_list[0] = 'ABEGHIJKLNOSUZ'
@@ -96,8 +96,84 @@ class GenerateTestCase(unittest.TestCase):
         self.assertFalse(pin_list_check(pin_list))
         pin_list[0] = 'BEFGHIJKSUX'
         self.assertFalse(pin_list_check(pin_list))
+        pin_list[0] = 'ABCDGKOTXYZ'
+        self.assertFalse(pin_list_check(pin_list))
 
-    def test_consecutive_noneffective_pins(self):
-        pass
+    def test_consecutive_effective_pins_1(self):
 
+        pin_list = self.valid_pin_list
+        pin_list[1] = 'BCEGIKMOTUVXYZ'
+        self.assertTrue(pin_list_check(pin_list))
+        pin_list[1] = 'ABCEGIKMOTUVXYZ'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_effective_pins_2(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[2] = 'ACEGIKMOSTUVX'
+        self.assertTrue(pin_list_check(pin_list))
+        pin_list[2] = 'ABEGIKMOSTUVX'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_effective_pins_3(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[3] = 'ACEGIKMOSTU'
+        self.assertTrue(pin_list_check(pin_list))
+        pin_list[3] = 'ABCDGIKMOSTU'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_effective_pins_4(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[4] = 'ABCEGIKMOQRS'
+        self.assertTrue(pin_list_check(pin_list))
+        pin_list[4] = 'ABGIKMOPQRS'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_effective_pins_5(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[5] = 'ABCEGIKMOQ'
+        self.assertTrue(pin_list_check(pin_list))
+        pin_list[5] = 'ABGIKMNOPQ'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_noneffective_pins_0(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[0] = 'ABCDENOPQSUWYZ'
+        self.assertFalse(pin_list_check(pin_list))
+        pin_list[0] = 'BCDFGHJKLMOPRST'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_noneffective_pins_1(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[1] = 'CDEGHJKLNOPQRST'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_noneffective_pins_2(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[2] = 'CDEFHIJKMNOPQRS'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_noneffective_pins_3(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[3] = 'CDEGHIKLNOP'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_noneffective_pins_4(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[4] = 'EFGIJKMOP'
+        self.assertFalse(pin_list_check(pin_list))
+
+    def test_consecutive_noneffective_pins_5(self):
+
+        pin_list = self.valid_pin_list
+        pin_list[5] = 'DEFHIKLM'
+        self.assertFalse(pin_list_check(pin_list))
 
