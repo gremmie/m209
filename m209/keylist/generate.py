@@ -71,12 +71,11 @@ def generate_key_list(indicator):
 def generate_lugs():
     """Return random lug settings based on Army procedure."""
 
-    # From the manual:
-    # "2a: Select a set of numbers from either group A or group B in appenix II.
-    # Sets of numbers selected from group B must not exceed 10% of the total
-    # sets selected."
-
-    # For our purposes, we'll just pick from group B 10% of the time. We also
+    # From the manual: "2a: Select a set of numbers from either group A or group
+    # B in appendix II.  Sets of numbers selected from group B must not exceed
+    # 10% of the total sets selected."
+    #
+    # For our purposes, we'll just pick from group B ~10% of the time. We also
     # (currently) have no history of prior key list generations, so we don't
     # worry about reusing sets or how often we've picked from group B.
     rn = random.randint(0, 100)
