@@ -12,6 +12,7 @@ from .key_list import KeyList
 from ..converter import M209
 from .. import M209Error
 from ..data import KEY_WHEEL_DATA
+from .data import GROUP_A, GROUP_B
 
 
 # Maximum number of attempts to generate valid settings before giving up and
@@ -69,6 +70,39 @@ def generate_key_list(indicator):
 
 def generate_lugs():
     """Return random lug settings based on Army procedure."""
+
+    # From the manual:
+    # "2a: Select a set of numbers from either group A or group B in appenix II.
+    # Sets of numbers selected from group B must not exceed 10% of the total
+    # sets selected."
+
+    # For our purposes, we'll just pick from group B 10% of the time. We also
+    # (currently) have no history of prior key list generations, so we don't
+    # worry about reusing sets or how often we've picked from group B.
+    rn = random.randint(0, 100)
+    group = GROUP_A if rn > 10 else GROUP_B
+    selection = random.choice(group)
+
+    # 2b: Rearrange the numbers so they appear in a random order
+    random.shuffle(selection)
+
+    # 2c: Distribution of Overlaps
+    overlap = sum(selection) - 27
+
+    # TODO:
+    # (1) Most of the six number should be involved
+    # (2) Overlaps should include numbers which are separated, and numbers which
+    # are side by side.
+    # (3) Several small overlaps should be used in preference to one large
+    # overlap
+    # (4) There must not be more than four overlaps between any two numbers.
+
+    # 2d: Checking placement of overlaps
+    # TODO
+
+    # Build lug string
+    # TODO
+
     return ''
 
 
