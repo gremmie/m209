@@ -7,6 +7,11 @@ utility.
 
 """
 import argparse
+import logging
+import sys
+
+from .keylist.generate import generate_key_list
+from .keylist.key_list import valid_indicator
 
 
 DESC = "M-209 simulator and utility program"
@@ -23,11 +28,22 @@ def decrypt(args):
     print('Decrypting!', args)
 
 
+def keygen(args):
+    """Key list generation subcommand processor"""
+    print('Creating key list!', args)
+    if not valid_indicator(args.keylist_indicator):
+        sys.exit("Invalid key list indicator\n")
+
+    print(generate_key_list(args.keylist_indicator))
+
+
 def main(argv=None):
     """Entry point for the m209 command-line utility."""
 
     # create the top-level parser
     parser = argparse.ArgumentParser(description=DESC)
+    parser.add_argument('-v', '--verbose', action='store_true',
+        help='enable verbose output')
     subparsers = parser.add_subparsers(title='list of commands',
         description='type %(prog)s {command} -h for help on {command}')
 
@@ -47,15 +63,29 @@ def main(argv=None):
     enc_parser.set_defaults(subcommand=encrypt)
 
     # create the parser for decrypt
-    enc_parser = subparsers.add_parser('decrypt', aliases=['de'],
+    dec_parser = subparsers.add_parser('decrypt', aliases=['de'],
         help='decrypt text')
-    enc_parser.add_argument('-k', '--keylist', default=DEFAULT_KEY_LIST,
+    dec_parser.add_argument('-k', '--keylist', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
-    enc_parser.add_argument('-c', '--ciphertext',
+    dec_parser.add_argument('-c', '--ciphertext',
         help='ciphertext string to decrypt; prompted if omitted')
-    enc_parser.set_defaults(subcommand=decrypt)
+    dec_parser.set_defaults(subcommand=decrypt)
+
+    # create the parser for generating key lists
+
+    kg_parser = subparsers.add_parser('keygen', aliases=['kg'],
+        help='generate key list')
+    kg_parser.add_argument('-k', '--keylist', default=DEFAULT_KEY_LIST,
+        help='path to key list file [default: %(default)s]')
+    kg_parser.add_argument('-i', '--keylist-indicator',
+        help='2 letter key list indicator')
+    kg_parser.set_defaults(subcommand=keygen)
 
     args = parser.parse_args(args=argv)
+
+    level = logging.DEBUG if args.verbose else logging.WARNING
+    logging.basicConfig(level=level, format='%(levelname)s:%(message)s')
+
     args.subcommand(args)
 
 

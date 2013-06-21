@@ -6,6 +6,7 @@
 
 import collections
 import itertools
+import logging
 import random
 
 from .key_list import KeyList
@@ -14,6 +15,8 @@ from .. import M209Error
 from ..data import KEY_WHEEL_DATA
 from .data import GROUP_A, GROUP_B
 
+
+logger = logging.getLogger(__name__)
 
 # Maximum number of attempts to generate valid settings before giving up and
 # raising a M209Error:
@@ -60,6 +63,8 @@ def generate_key_list(indicator):
     1942, and TM-11-380B, 20 September 1943."
 
     """
+    logger.info("Creating key list %s", indicator)
+
     lugs = generate_lugs()
     pin_list = generate_pin_list()
     letter_check = generate_letter_check(lugs=lugs, pin_list=pin_list)
@@ -124,6 +129,8 @@ def generate_pin_list():
     else:
         raise M209Error("generate_pin_list: too many attempts")
 
+    logger.info("Pin list generated in %s iteration(s)", n + 1)
+
     return pin_list
 
 
@@ -147,18 +154,21 @@ def pin_list_check(pin_list):
     ratio = num_eff / TOTAL_PINS
 
     if not (0.4 <= ratio <= 0.6):
+        logger.info("Pin list ratio check failed: %s", ratio)
         return False
 
     # Check for more than 6 consecutive effective pins on a wheel
 
     for n, pins in enumerate(pin_list):
         if check_consecutive(n, pins):
+            logger.debug("Pin list consecutive effective check failed")
             return False
 
     # Check for more than 6 consecutive ineffective pins on a wheel
 
     for n, pins in enumerate(pin_list):
         if check_consecutive(n, invert_pins(n, pins)):
+            logger.debug("Pin list consecutive ineffective check failed")
             return False
 
     return True
