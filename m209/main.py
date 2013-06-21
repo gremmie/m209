@@ -16,6 +16,7 @@ from .keylist.key_list import valid_indicator
 
 DESC = "M-209 simulator and utility program"
 DEFAULT_KEY_LIST = 'm209keys.cfg'
+LOG_CHOICES = ['debug', 'info', 'warning', 'error', 'critical']
 
 
 def encrypt(args):
@@ -42,8 +43,8 @@ def main(argv=None):
 
     # create the top-level parser
     parser = argparse.ArgumentParser(description=DESC)
-    parser.add_argument('-v', '--verbose', action='store_true',
-        help='enable verbose output')
+    parser.add_argument('-l', '--log', choices=LOG_CHOICES, default='warning',
+        help='set log level [default: %(default)s]')
     subparsers = parser.add_subparsers(title='list of commands',
         description='type %(prog)s {command} -h for help on {command}')
 
@@ -83,8 +84,8 @@ def main(argv=None):
 
     args = parser.parse_args(args=argv)
 
-    level = logging.DEBUG if args.verbose else logging.WARNING
-    logging.basicConfig(level=level, format='%(levelname)s:%(message)s')
+    log_level = getattr(logging, args.log.upper())
+    logging.basicConfig(level=log_level, format='%(levelname)s:%(message)s')
 
     args.subcommand(args)
 
