@@ -87,27 +87,128 @@ def generate_lugs():
     group = GROUP_A if rn > 10 else GROUP_B
     selection = random.choice(group)
 
+    logger.debug("Selecting from group %s", 'A' if group is GROUP_A else 'B')
+    logger.debug("Selection: %s", selection)
+
     # 2b: Rearrange the numbers so they appear in a random order
     random.shuffle(selection)
+    logger.debug("Shuffled selection: %s", selection)
 
     # 2c: Distribution of Overlaps
     overlap = sum(selection) - 27
+    logger.debug("Overlap: %d", overlap)
 
-    # TODO:
-    # (1) Most of the six number should be involved
-    # (2) Overlaps should include numbers which are separated, and numbers which
-    # are side by side.
-    # (3) Several small overlaps should be used in preference to one large
-    # overlap
-    # (4) There must not be more than four overlaps between any two numbers.
-
-    # 2d: Checking placement of overlaps
-    # TODO
+    for n in range(MAX_ATTEMPTS):
+        overlaps = distribute_overlaps(selection, overlap)
+        if overlaps and check_overlaps(overlaps):
+            break
+    else:
+        raise M209Error("generate_lugs: too many attempts")
+    logger.info("Lugs generated in %s iteration(s)", n + 1)
 
     # Build lug string
     # TODO
 
     return ''
+
+
+def distribute_overlaps(selection, overlap):
+    """Distributes the overlaps over the selection and returns an overlap list.
+
+    If successful, return a list consisting of 3-tuples of the form (position1,
+    position2, overlap). If unable to come up with a solution, an empty list is
+    returned.
+
+    """
+
+    # The remaining list keeps track of how many lugs are remaining in each
+    # position:
+    remaining = list(selection)
+
+    # Generate all combinations of ways to pick 2 positions in random order
+    combs = list(itertools.combinations(range(0, 6), 2))
+    random.shuffle(combs)
+
+    # chunk_limit enforces the rules:
+    # (3) Several small overlaps should be used in preference to one large
+    # overlap.
+    # (4) There must not be more than four overlaps between any two numbers.
+    if 1 <= overlap <= 3:
+        divisor = 1
+    elif 4 <= overlap <= 8:
+        divisor = 2
+    else:
+        divisor = 3
+    chunk_limit = max(1, min(4, overlap // divisor))
+    logger.debug("chunk_limit: %d", chunk_limit)
+
+    overlaps = []
+    for c in combs:
+        if overlap <= 0:
+            break
+        x, y = c
+        # Figure out the largest 'chunk' we can remove from overlap
+        max_chunk = min(remaining[x], remaining[y], overlap, chunk_limit)
+
+        if max_chunk <= 0:
+            continue
+
+        chunk = random.randint(1, max_chunk)
+
+        overlap -= chunk
+        remaining[x] -= chunk
+        remaining[y] -= chunk
+
+        overlaps.append((x, y, chunk))
+
+    overlaps.sort()
+
+    logger.debug("Overlap: %d", overlap)
+    logger.debug('Overlaps: %s', overlaps)
+
+    return overlaps if overlap == 0 else []
+
+
+def check_overlaps(overlaps):
+    """Checks the overlap list for the desired qualities.
+
+    Returns True if all checks pass and False otherwise.
+
+    """
+    # (1) Most of the six numbers should be involved
+    # We only check this if we have 3 or more overlaps.
+
+    if len(overlaps) >= 3:
+        numbers = set()
+        for x, y, n in overlaps:
+            numbers.add(x)
+            numbers.add(y)
+        if len(numbers) <= 3:
+            logger.debug("check_overlaps: failed most of 6 check")
+            return False
+
+    # (2) Overlaps should include numbers which are separated, and numbers which
+    # are side by side.
+    # We only check this if we have 2 or more overlaps:
+
+    if len(overlaps) >= 2:
+        for x, y, n in overlaps:
+            if y - x > 1:
+                break
+        else:
+            logger.debug("check_overlaps: failed separated check")
+            return False
+
+        for x, y, n in overlaps:
+            if y - x == 1:
+                break
+        else:
+            logger.debug("check_overlaps: failed side by side check")
+            return False
+
+    # 2d: Checking placement of overlaps
+
+    return True
 
 
 def generate_pin_list():
