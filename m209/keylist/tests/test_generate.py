@@ -8,7 +8,7 @@ import collections
 import random
 import unittest
 
-from ..generate import generate_key_list, pin_list_check
+from ..generate import generate_key_list, pin_list_check, check_overlaps
 from m209.converter import M209
 from m209.data import KEY_WHEEL_DATA
 
@@ -176,4 +176,31 @@ class GenerateTestCase(unittest.TestCase):
         pin_list = self.valid_pin_list
         pin_list[5] = 'DEFHIKLM'
         self.assertFalse(pin_list_check(pin_list))
+
+
+class CheckOverlapsTestCase(unittest.TestCase):
+
+    def test_most_of_six(self):
+
+        self.assertTrue(check_overlaps([(0, 1, 2), (0, 2, 2)]))
+        self.assertTrue(check_overlaps([(0, 1, 2), (0, 2, 1), (0, 3, 1)]))
+        self.assertTrue(check_overlaps([(0, 1, 2), (1, 2, 1), (1, 3, 1), (4, 5, 1)]))
+        self.assertFalse(check_overlaps([(0, 1, 2), (0, 2, 1), (1, 2, 1)]))
+        self.assertFalse(check_overlaps([(2, 4, 2), (2, 5, 1), (4, 5, 1)]))
+
+    def test_separated(self):
+
+        self.assertTrue(check_overlaps([(0, 1, 1)]))
+        self.assertTrue(check_overlaps([(0, 2, 1)]))
+        self.assertFalse(check_overlaps([(0, 1, 1), (1, 2, 1)]))
+        self.assertFalse(check_overlaps([(0, 1, 1), (1, 2, 1), (3, 4, 1)]))
+        self.assertFalse(check_overlaps([(0, 1, 1), (1, 2, 1), (3, 4, 1), (4, 5, 1)]))
+
+    def test_side_by_side(self):
+
+        self.assertTrue(check_overlaps([(0, 1, 1)]))
+        self.assertTrue(check_overlaps([(0, 2, 1)]))
+        self.assertFalse(check_overlaps([(0, 2, 1), (1, 3, 1)]))
+        self.assertFalse(check_overlaps([(0, 2, 1), (1, 3, 1), (2, 4, 1)]))
+        self.assertFalse(check_overlaps([(0, 2, 1), (1, 3, 1), (2, 4, 1), (2, 5, 1)]))
 

@@ -33,7 +33,7 @@ def keygen(args):
     """Key list generation subcommand processor"""
     print('Creating key list!', args)
     if not valid_indicator(args.keylist_indicator):
-        sys.exit("Invalid key list indicator\n")
+        sys.exit("Invalid key list indicator %s\n" % args.keylist_indicator)
 
     print(generate_key_list(args.keylist_indicator))
 
