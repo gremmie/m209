@@ -11,6 +11,8 @@ import unittest
 from ..generate import generate_key_list, pin_list_check, check_overlaps
 from m209.converter import M209
 from m209.data import KEY_WHEEL_DATA
+from m209.drum import Drum
+from m209.keylist.data import ALL_DRUM_ROTATE_INPUTS
 
 
 def make_pin_list(eff_cnt):
@@ -40,7 +42,7 @@ class GenerateTestCase(unittest.TestCase):
             'EFGHIJLMNP'
         ]
 
-    def test_generate_key_list(self):
+    def do_test_generate_key_list(self):
 
         key_list = generate_key_list('BN')
         self.assertEqual(key_list.indicator, 'BN')
@@ -50,12 +52,35 @@ class GenerateTestCase(unittest.TestCase):
         for i, pins in enumerate(key_list.pin_list):
             self.assertTrue(all(c in KEY_WHEEL_DATA[i][0] for c in pins))
 
-        # TODO: add some lug asserts
-
         m_209 = M209(lugs=key_list.lugs, pin_list=key_list.pin_list)
         m_209.set_key_wheels('AAAAAA')
         s = m_209.encrypt('A' * 26)
         self.assertEqual(s, key_list.letter_check)
+
+    def test_generate_key_list(self):
+
+        for n in range(32):
+            self.do_test_generate_key_list()
+
+    def do_test_lug_settings(self):
+
+        key_list = generate_key_list('BN')
+        drum = Drum.from_key_list(key_list.lugs)
+
+        vals = set()
+        for pins in ALL_DRUM_ROTATE_INPUTS:
+            val = drum.rotate(pins)
+            self.assertTrue(1 <= val <= 27)
+            vals.add(val)
+            if len(vals) == 27:
+                break
+        else:
+            self.fail('Invalid drum settings (1-27 check)')
+
+    def test_lug_settings(self):
+
+        for n in range(1024):
+            self.do_test_lug_settings()
 
     def test_pin_list_check(self):
 
