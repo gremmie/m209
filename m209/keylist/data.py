@@ -374,3 +374,92 @@ GROUP_B = [
     [1, 2, 4, 7, 12, 12],
     [1, 2, 3, 7, 13, 13],
 ]
+
+
+# All possible inputs to the Drum.rotate() function. This is used to ensure lug
+# settings can create all values between 1 - 27, inclusive.
+#
+# This list was generated as follows:
+# >>> from itertools import permutations
+# >>> cases = [
+# ...     [True, True, True, True, True, True],
+# ...     [True, True, True, True, True, False],
+# ...     [True, True, True, True, False, False],
+# ...     [True, True, True, False, False, False],
+# ...     [True, True, False, False, False, False],
+# ...     [True, False, False, False, False, False],
+# ... ]
+# >>>
+# >>> result = []
+# >>> for case in cases:
+# ...     result.extend(sorted(list(set(permutations(case)))))
+#
+# The code above could have been included directly but it seems wasteful to
+# compute it every time the program is run. We'll trade some memory for CPU
+# here.
+
+ALL_DRUM_ROTATE_INPUTS = [
+    (True, True, True, True, True, True),
+    (False, True, True, True, True, True),
+    (True, False, True, True, True, True),
+    (True, True, False, True, True, True),
+    (True, True, True, False, True, True),
+    (True, True, True, True, False, True),
+    (True, True, True, True, True, False),
+    (False, False, True, True, True, True),
+    (False, True, False, True, True, True),
+    (False, True, True, False, True, True),
+    (False, True, True, True, False, True),
+    (False, True, True, True, True, False),
+    (True, False, False, True, True, True),
+    (True, False, True, False, True, True),
+    (True, False, True, True, False, True),
+    (True, False, True, True, True, False),
+    (True, True, False, False, True, True),
+    (True, True, False, True, False, True),
+    (True, True, False, True, True, False),
+    (True, True, True, False, False, True),
+    (True, True, True, False, True, False),
+    (True, True, True, True, False, False),
+    (False, False, False, True, True, True),
+    (False, False, True, False, True, True),
+    (False, False, True, True, False, True),
+    (False, False, True, True, True, False),
+    (False, True, False, False, True, True),
+    (False, True, False, True, False, True),
+    (False, True, False, True, True, False),
+    (False, True, True, False, False, True),
+    (False, True, True, False, True, False),
+    (False, True, True, True, False, False),
+    (True, False, False, False, True, True),
+    (True, False, False, True, False, True),
+    (True, False, False, True, True, False),
+    (True, False, True, False, False, True),
+    (True, False, True, False, True, False),
+    (True, False, True, True, False, False),
+    (True, True, False, False, False, True),
+    (True, True, False, False, True, False),
+    (True, True, False, True, False, False),
+    (True, True, True, False, False, False),
+    (False, False, False, False, True, True),
+    (False, False, False, True, False, True),
+    (False, False, False, True, True, False),
+    (False, False, True, False, False, True),
+    (False, False, True, False, True, False),
+    (False, False, True, True, False, False),
+    (False, True, False, False, False, True),
+    (False, True, False, False, True, False),
+    (False, True, False, True, False, False),
+    (False, True, True, False, False, False),
+    (True, False, False, False, False, True),
+    (True, False, False, False, True, False),
+    (True, False, False, True, False, False),
+    (True, False, True, False, False, False),
+    (True, True, False, False, False, False),
+    (False, False, False, False, False, True),
+    (False, False, False, False, True, False),
+    (False, False, False, True, False, False),
+    (False, False, True, False, False, False),
+    (False, True, False, False, False, False),
+    (True, False, False, False, False, False),
+]

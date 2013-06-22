@@ -13,14 +13,15 @@ from .key_list import KeyList
 from ..converter import M209
 from .. import M209Error
 from ..data import KEY_WHEEL_DATA
-from .data import GROUP_A, GROUP_B
+from .data import GROUP_A, GROUP_B, ALL_DRUM_ROTATE_INPUTS
+from ..drum import Drum
 
 
 logger = logging.getLogger(__name__)
 
 # Maximum number of attempts to generate valid settings before giving up and
 # raising a M209Error:
-MAX_ATTEMPTS = 128
+MAX_ATTEMPTS = 1024
 
 # Total number of pins on all 6 wheels:
 TOTAL_PINS = sum(len(letters) for letters, _ in KEY_WHEEL_DATA)
@@ -101,15 +102,20 @@ def generate_lugs():
     for n in range(MAX_ATTEMPTS):
         overlaps = distribute_overlaps(selection, overlap)
         if overlaps and check_overlaps(overlaps):
-            break
+            # So far this looks good. But now we need to determine if the drum
+            # can generate all numbers in the range 1-27.
+            # Build a drum from our setup:
+            drum = Drum(build_lug_list(selection, overlaps))
+            logger.debug('Drum: %s', drum)
+            if check_lug_placement(drum):
+                break
+            else:
+                logger.debug("Failed lug placement check")
     else:
-        raise M209Error("generate_lugs: too many attempts")
+        raise M209Error("generate_lugs: too many attempts: %s" % sorted(selection))
     logger.info("Lugs generated in %s iteration(s)", n + 1)
 
-    # Build lug string
-    # TODO
-
-    return ''
+    return drum.to_key_list()
 
 
 def distribute_overlaps(selection, overlap):
@@ -207,6 +213,47 @@ def check_overlaps(overlaps):
             return False
 
     # 2d: Checking placement of overlaps
+
+    return True
+
+
+def build_lug_list(selection, overlaps):
+    """Build a lug list given the current selection and overlaps list."""
+
+    remaining = list(selection)
+
+    lug_list = []
+    for x, y, n in overlaps:
+        lug_list.extend([(x, y)] * n)
+        remaining[x] -= n
+        remaining[y] -= n
+
+    for n in range(6):
+        lug_list.extend([(n, )] * remaining[n])
+
+    return lug_list
+
+
+def check_lug_placement(drum):
+    """Returns True if this drum is capable of generating all values in the
+    range 1-27, inclusive, and False otherwise.
+
+    """
+    values = set()
+
+    # Loop over all possible inputs to Drum.rotate(), noting the answer each
+    # time by storing it in our values set. When the size of our set reaches 27
+    # we know we have good settings.
+
+    for pins in ALL_DRUM_ROTATE_INPUTS:
+        val = drum.rotate(pins)
+        assert(1 <= val <= 27)
+        values.add(val)
+
+        if len(values) == 27:
+            break
+    else:
+        return False
 
     return True
 
