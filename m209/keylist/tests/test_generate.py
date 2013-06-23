@@ -8,11 +8,12 @@ import collections
 import random
 import unittest
 
-from ..generate import generate_key_list, pin_list_check, check_overlaps
+from ..generate import (generate_key_list, pin_list_check, check_overlaps,
+                        KeyListGenError)
 from m209.converter import M209
 from m209.data import KEY_WHEEL_DATA
 from m209.drum import Drum
-from m209.keylist.data import ALL_DRUM_ROTATE_INPUTS
+from m209.keylist.data import GROUP_A, GROUP_B, ALL_DRUM_ROTATE_INPUTS
 
 
 def make_pin_list(eff_cnt):
@@ -62,9 +63,15 @@ class GenerateTestCase(unittest.TestCase):
         for n in range(32):
             self.do_test_generate_key_list()
 
-    def do_test_lug_settings(self):
+    def do_test_lug_settings(self, selection, failures, max_lug_attempts=1024):
 
-        key_list = generate_key_list('BN')
+        try:
+            key_list = generate_key_list('BN', lug_selection=selection,
+                    max_lug_attempts=max_lug_attempts)
+        except KeyListGenError:
+            failures.append(selection)
+            return
+
         drum = Drum.from_key_list(key_list.lugs)
 
         vals = set()
@@ -77,10 +84,23 @@ class GenerateTestCase(unittest.TestCase):
         else:
             self.fail('Invalid drum settings (1-27 check)')
 
-    def test_lug_settings(self):
+    def test_key_list_group_a(self):
 
-        for n in range(1024):
-            self.do_test_lug_settings()
+        failures = []
+        for selection in GROUP_A:
+            self.do_test_lug_settings(selection, failures)
+
+        if failures:
+            self.fail("Group A failures: %s" % failures)
+
+    def test_key_list_group_b(self):
+
+        failures = []
+        for selection in GROUP_B:
+            self.do_test_lug_settings(selection, failures)
+
+        if failures:
+            self.fail("Group B failures: %s" % failures)
 
     def test_pin_list_check(self):
 
