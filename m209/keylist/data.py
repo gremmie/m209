@@ -20,6 +20,14 @@
 # TYPO?, below. Should I tell the War Department? :P
 # I changed it to a sequence where the overlap matched the lines above and below
 # it. I suppose it could have been intentional.
+#
+# Finally there were 5 selections in group B that our heuristic algorithm could
+# not find a solution for, even when allowed to iterate 100,000 times. At this
+# time I am not certain there is a solution for these values. For the time
+# being I have commented them out. I would imagine that if our (albeit simple)
+# algorithm could not come up with a solution then a soldier would have
+# difficulty finding a solution as well, assuming they generated the key lists
+# by hand. If they used a computer or algorithm, I'd sure like to see it!
 
 GROUP_A = [
     [1, 2, 3, 4, 8, 10],
@@ -331,11 +339,11 @@ GROUP_B = [
     [1, 1, 3, 5, 10, 13],
     [1, 1, 3, 6, 10, 12],
     [1, 1, 3, 6, 9, 13],
-    [1, 2, 2, 4, 11, 13],
+#   [1, 2, 2, 4, 11, 13],   # Our algorithm has trouble with this one
     [1, 2, 2, 5, 11, 12],
     [1, 2, 2, 5, 10, 13],
     [1, 2, 2, 6, 9, 13],
-    [1, 2, 3, 3, 11, 13],
+#   [1, 2, 3, 3, 11, 13],   # Our algorithm has trouble with this one
     [1, 2, 3, 5, 11, 11],
     [1, 2, 3, 7, 7, 13],
     [1, 2, 3, 7, 10, 10],
@@ -344,7 +352,7 @@ GROUP_B = [
     [1, 1, 3, 5, 11, 13],
     [1, 1, 3, 6, 11, 12],
     [1, 1, 3, 6, 10, 13],
-    [1, 2, 2, 4, 12, 13],
+#   [1, 2, 2, 4, 12, 13],   # Our algorithm has trouble with this one
     [1, 2, 2, 5, 11, 13],
     [1, 2, 2, 6, 11, 12],
     [1, 2, 2, 6, 10, 13],
@@ -367,8 +375,8 @@ GROUP_B = [
     [1, 2, 4, 5, 12, 12],
     [1, 2, 4, 7, 11, 11],
     [1, 2, 4, 8, 8, 13],
-    [1, 2, 2, 6, 13, 13],
-    [1, 2, 3, 5, 13, 13],
+#   [1, 2, 2, 6, 13, 13],   # Our algorithm has trouble with this one
+#   [1, 2, 3, 5, 13, 13],   # Our algorithm has trouble with this one
     [1, 2, 4, 8, 11, 11],
     [1, 2, 3, 6, 13, 13],
     [1, 2, 4, 7, 12, 12],

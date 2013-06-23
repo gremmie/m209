@@ -17,11 +17,19 @@ from .data import GROUP_A, GROUP_B, ALL_DRUM_ROTATE_INPUTS
 from ..drum import Drum
 
 
+class KeyListGenError(M209Error):
+    """Exception class for key list generation errors"""
+
+
 logger = logging.getLogger(__name__)
 
-# Maximum number of attempts to generate valid settings before giving up and
-# raising a M209Error:
-MAX_ATTEMPTS = 1024
+# Maximum number of attempts to generate valid lug settings before giving up and
+# raising a KeyListGenError:
+MAX_LUG_ATTEMPTS = 2048
+
+# Maximum number of attempts to generate valid pin settings before giving up and
+# raising a KeyListGenError:
+MAX_PIN_ATTEMPTS = 64
 
 # Total number of pins on all 6 wheels:
 TOTAL_PINS = sum(len(letters) for letters, _ in KEY_WHEEL_DATA)
@@ -47,7 +55,8 @@ def build_consec_map(letters):
 CONSEC_MAPS = [build_consec_map(letters) for letters, _ in KEY_WHEEL_DATA]
 
 
-def generate_key_list(indicator):
+def generate_key_list(indicator, lug_selection=None,
+        max_lug_attempts=MAX_LUG_ATTEMPTS, max_pin_attempts=MAX_PIN_ATTEMPTS):
     """Create a key list at random with the given indicator.
 
     The procedure used is based upon manuals for the M-209 as found online:
@@ -63,43 +72,71 @@ def generate_key_list(indicator):
     Page 1 of reference [2] says: "This manual supercedes TM-11-380, 27 April
     1942, and TM-11-380B, 20 September 1943."
 
+    The algorithm we use follows the procedure outlined in reference [2]. The
+    algorithm is simple and ad-hoc in nature. When required to make a decision
+    it relies on some simple heuristics and random numbers. If it cannot come up
+    with a solution it simply tries again, up to an iteration limit. This
+    algorithm was sufficient to generate solutions for all sets of numbers in
+    group A (given enough iterations). However there were some sets of numbers
+    where our algorithm could not find a solution, even when allowed to iterate
+    100,000 times. See the m209.keylist.data module for the problematic entries.
+    It is not known if our algorithm is just unlucky and not able to find
+    a solution, the algorithm is flawed and can't find certain solutions, or if
+    a solution doesn't actually exist. An interesting side project would be to
+    write a program to search the solution space for a given set of numbers to
+    see if a solution could actually be found. In any event, for our purposes,
+    we just remove the problematic entries from the table.
+
     """
     logger.info("Creating key list %s", indicator)
 
-    lugs = generate_lugs()
-    pin_list = generate_pin_list()
+    lugs = generate_lugs(lug_selection, max_lug_attempts)
+    pin_list = generate_pin_list(max_pin_attempts)
     letter_check = generate_letter_check(lugs=lugs, pin_list=pin_list)
 
     return KeyList(indicator=indicator, lugs=lugs, pin_list=pin_list,
             letter_check=letter_check)
 
 
-def generate_lugs():
-    """Return random lug settings based on Army procedure."""
+def generate_lugs(lug_selection=None, max_attempts=MAX_LUG_ATTEMPTS):
+    """Return random lug settings based on Army procedure.
 
-    # From the manual: "2a: Select a set of numbers from either group A or group
-    # B in appendix II.  Sets of numbers selected from group B must not exceed
-    # 10% of the total sets selected."
-    #
-    # For our purposes, we'll just pick from group B ~10% of the time. We also
-    # (currently) have no history of prior key list generations, so we don't
-    # worry about reusing sets or how often we've picked from group B.
-    rn = random.randint(0, 100)
-    group = GROUP_A if rn > 10 else GROUP_B
-    selection = random.choice(group)
+    If not None, lug_selection must be a list of 6 integers that will be used
+    for driving the lug settings algorithm. If None, a set of numbers is chosen
+    from the tables in appendix II of the manual.
 
-    logger.debug("Selecting from group %s", 'A' if group is GROUP_A else 'B')
-    logger.debug("Selection: %s", selection)
+    The parameter max_lug_attempts controls how many iterations the algorithm
+    can perform to find a solution before giving up. If forced to give up,
+    a KeyListGenError is raised.
 
-    # 2b: Rearrange the numbers so they appear in a random order
-    random.shuffle(selection)
-    logger.debug("Shuffled selection: %s", selection)
+    """
+    selection_provided = lug_selection is not None
+    if selection_provided:
+        selection = lug_selection
+        logger.debug("Selection provided: %s", selection)
+    else:
+        # From the manual: "2a: Select a set of numbers from either group A or
+        # group B in appendix II.  Sets of numbers selected from group B must
+        # not exceed 10% of the total sets selected."
+        #
+        # For our purposes, we'll just pick from group B ~10% of the time. We
+        # also (currently) have no history of prior key list generations, so we
+        # don't worry about reusing sets or how often we've picked from group B.
+        rn = random.randint(0, 100)
+        group = GROUP_A if rn > 10 else GROUP_B
+        logger.debug("Selecting from group %s", 'A' if group is GROUP_A else 'B')
+        selection = random.choice(group)
+        logger.debug("Selection: %s", selection)
+
+        # 2b: Rearrange the numbers so they appear in a random order
+        random.shuffle(selection)
+        logger.debug("Shuffled selection: %s", selection)
 
     # 2c: Distribution of Overlaps
     overlap = sum(selection) - 27
     logger.debug("Overlap: %d", overlap)
 
-    for n in range(MAX_ATTEMPTS):
+    for n in range(max_attempts):
         overlaps = distribute_overlaps(selection, overlap)
         if overlaps and check_overlaps(overlaps):
             # So far this looks good. But now we need to determine if the drum
@@ -112,7 +149,7 @@ def generate_lugs():
             else:
                 logger.debug("Failed lug placement check")
     else:
-        raise M209Error("generate_lugs: too many attempts: %s" % sorted(selection))
+        raise KeyListGenError("generate_lugs: too many attempts: %s" % sorted(selection))
     logger.info("Lugs generated in %s iteration(s)", n + 1)
 
     return drum.to_key_list()
@@ -212,8 +249,6 @@ def check_overlaps(overlaps):
             logger.debug("check_overlaps: failed side by side check")
             return False
 
-    # 2d: Checking placement of overlaps
-
     return True
 
 
@@ -258,13 +293,17 @@ def check_lug_placement(drum):
     return True
 
 
-def generate_pin_list():
-    """Return a random pin list based on Army procedure."""
+def generate_pin_list(max_attempts=MAX_PIN_ATTEMPTS):
+    """Return a random pin list based on Army procedure.
 
+    The max_attempts parameter controls how many iterations the algorithm can
+    perform before giving up. If forced to give up, an KeyListGenError is raised.
+
+    """
     cards = ['R'] * 78
     cards.extend(['L'] * (156 - len(cards)))
 
-    for n in range(MAX_ATTEMPTS):
+    for n in range(max_attempts):
         random.shuffle(cards)
         deck = collections.deque(cards)
         pin_list = []
@@ -275,7 +314,7 @@ def generate_pin_list():
         if pin_list_check(pin_list):
             break
     else:
-        raise M209Error("generate_pin_list: too many attempts")
+        raise KeyListGenError("generate_pin_list: too many attempts")
 
     logger.info("Pin list generated in %s iteration(s)", n + 1)
 
