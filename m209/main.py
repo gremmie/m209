@@ -19,6 +19,24 @@ DEFAULT_KEY_LIST = 'm209keys.cfg'
 LOG_CHOICES = ['debug', 'info', 'warning', 'error', 'critical']
 
 
+def keylist_range(start, end):
+    """A generator function to generate key list indicators.
+
+    Generates a range of indicators from start to end, inclusive.
+
+    """
+    def to_int(s):
+        return (ord(s[0]) - ord('A')) * 26 + ord(s[1]) - ord('A')
+
+    x = to_int(start)
+    y = to_int(end)
+
+    for n in range(x, y + 1):
+        c = n // 26
+        d = n % 26
+        yield chr(c + ord('A')) + chr(d + ord('A'))
+
+
 def encrypt(args):
     """Encrypt subcommand processor"""
     print('Encrypting!', args)
@@ -32,10 +50,6 @@ def decrypt(args):
 def keygen(args):
     """Key list generation subcommand processor"""
     print('Creating key list!', args)
-    if not valid_indicator(args.keylist_indicator):
-        sys.exit("Invalid key list indicator %s\n" % args.keylist_indicator)
-
-    print(generate_key_list(args.keylist_indicator))
 
 
 def main(argv=None):
@@ -75,11 +89,16 @@ def main(argv=None):
     # create the parser for generating key lists
 
     kg_parser = subparsers.add_parser('keygen', aliases=['kg'],
+        description='Generate key list files',
         help='generate key list')
-    kg_parser.add_argument('-k', '--keylist', default=DEFAULT_KEY_LIST,
+    kg_parser.add_argument('-f', '--file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
-    kg_parser.add_argument('-i', '--keylist-indicator',
-        help='2 letter key list indicator')
+    kg_parser.add_argument('-o', '--overwrite', action='store_true',
+        help='overwrite key list file if it exists')
+    kg_parser.add_argument('-i', '--indicators', nargs='+', metavar='XX',
+        help='key list indicators [e.g. AA BB XA-XZ]')
+    kg_parser.add_argument('-r', '--random', type=int, metavar='N',
+        help='generate N random key lists')
     kg_parser.set_defaults(subcommand=keygen)
 
     args = parser.parse_args(args=argv)
