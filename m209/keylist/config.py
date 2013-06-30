@@ -31,25 +31,37 @@ wheel6 = AEFHIJP
 check = OZGPK AFVAJ JYRZW LRJEG MOVLU M
 
 """
-
 import configparser
+import random
+
 from .key_list import KeyList
 
 WHEELS = ['wheel{}'.format(n) for n in range(1, 7)]
 
 
-def read_key_list(fname, indicator):
+def read_key_list(fname, indicator=None):
     """Reads key list information from the file given by fname.
 
     Searches the config file for the key list with the given indicator. If
     found, returns a KeyList object. Returns None if not found.
 
+    If indicator is None, a key list is chosen from the file at random.
+
     """
     config = configparser.ConfigParser(interpolation=None)
-    config.read(fname)
-
-    if indicator not in config.sections():
+    try:
+        config.read(fname)
+    except configparser.Error:
         return None
+
+    if not config.sections():
+        return None
+
+    if indicator and indicator not in config.sections():
+        return None
+    else:
+        # choose one at random
+        indicator = random.choice(config.sections())
 
     section = config[indicator]
     return KeyList(
