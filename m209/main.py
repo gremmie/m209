@@ -26,6 +26,7 @@ DESC = "M-209 simulator and utility program"
 DEFAULT_KEY_LIST = 'm209keys.cfg'
 LOG_CHOICES = ['debug', 'info', 'warning', 'error', 'critical']
 SYS_IND_RE = re.compile(r'^[A-Z]{1}$')
+M209_ALPHABET_LOWER = set(c.lower() for c in M209_ALPHABET_SET)
 
 
 def validate_key_list_indicator(s):
@@ -94,21 +95,42 @@ def validate_sys_indicator(s):
     raise argparse.ArgumentTypeError('value must be 1 letter')
 
 
+def plaintext_filter(fp):
+    """Generator function to filter input plaintext.
+
+    * ASCII upper case letters are passed as-is.
+    * ASCII lower case letters are converted to upper case.
+    * Whitespace characters are converted to 'Z'.
+    * All other characters are dropped from the input.
+
+    """
+    for line in fp:
+        for c in line:
+            if c in M209_ALPHABET_SET:
+                yield c
+            elif c in M209_ALPHABET_LOWER:
+                yield c.upper()
+            elif c.isspace():
+                yield 'Z'
+
+
 def encrypt(args):
     """Encrypt subcommand processor"""
-    print('Encrypting!', args)
-
     logging.info("Encrypting using key file %s", args.file)
+
+    # Get a key list from the key list file
     if not os.path.isfile(args.file):
         sys.exit("key list file not found: {}\n".format(args.file))
 
-    # Get a key list from the key list file
     key_list = read_key_list(args.file, args.key_list_ind)
     if not key_list:
         sys.exit("key list not found in file: {}\n".format(args.file))
 
+    # Get the plaintext
+    infile = open(args.plaintext, 'r') if args.plaintext != '-' else sys.stdin
+    plaintext = plaintext_filter(infile)
+
     proc = StdProcedure(key_list=key_list)
-    plaintext = "HELLOZWORLDX"
     ct = proc.encrypt(plaintext, ext_msg_ind=args.ext_ind, sys_ind=args.sys_ind)
     print(ct)
 
