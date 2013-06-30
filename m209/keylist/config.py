@@ -59,7 +59,7 @@ def read_key_list(fname, indicator=None):
 
     if indicator and indicator not in config.sections():
         return None
-    else:
+    elif indicator is None:
         # choose one at random
         indicator = random.choice(config.sections())
 
