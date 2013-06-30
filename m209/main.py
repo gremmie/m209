@@ -14,6 +14,7 @@ import sys
 
 from .keylist.generate import generate_key_list
 from .keylist.key_list import valid_indicator, IndicatorIter
+from .keylist.config import write as write_config
 
 
 DESC = "M-209 simulator and utility program"
@@ -25,7 +26,7 @@ def validate_key_list_indicator(s):
     """Validation/conversion function for validating the supplied starting key
     list indicator.
 
-    Returns the string valud if valid, otherwise raises an ArgumentTypeError.
+    Returns the string value if valid, otherwise raises an ArgumentTypeError.
 
     """
     if s == '*' or valid_indicator(s):
@@ -65,13 +66,14 @@ def decrypt(args):
 
 def keygen(args):
     """Key list generation subcommand processor"""
-    print('Creating key list!', args)
+    logging.info("Creating key list file: %s", args.file)
 
     if not args.overwrite and os.path.exists(args.file):
         sys.exit("File '{}' exists. Use -o to overwrite\n".format(args.file))
 
     if args.start == '*':   # random indicators
         indicators = random.sample([i for i in IndicatorIter()], args.number)
+        indicators.sort()
     else:
         it = IndicatorIter(args.start)
         n = len(it)
@@ -83,8 +85,7 @@ def keygen(args):
 
     key_lists = (generate_key_list(indicator) for indicator in indicators)
 
-    for key_list in key_lists:
-        print(key_list)
+    write_config(args.file, key_lists)
 
 
 def main(argv=None):
@@ -140,9 +141,14 @@ def main(argv=None):
     args = parser.parse_args(args=argv)
 
     log_level = getattr(logging, args.log.upper())
-    logging.basicConfig(level=log_level, format='%(levelname)s:%(message)s')
+    logging.basicConfig(level=log_level, format='%(message)s')
 
-    args.subcommand(args)
+    try:
+        args.subcommand(args)
+    except EnvironmentError as ex:
+        sys.exit('{}\n'.format(ex))
+    except KeyboardInterrupt:
+        sys.exit('Interrupted\n')
 
 
 if __name__ == '__main__':
