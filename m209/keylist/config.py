@@ -59,31 +59,20 @@ def read_key_list(fname, indicator):
             letter_check=section['check'])
 
 
-def write_key_list(fname, key_list):
-    """Updates the file named by fname with the given key_list.
+def write(fname, key_lists):
+    """Writes the key lists to the file named fname in config file format.
 
-    If the file doesn't exist, it is created and the key_list is written to it.
-
-    If the file already exists, it is read and searched for a section that
-    matches the key_list indicator name. If found, this section is updated and
-    the file is written back out. If the section is not found, one for the
-    key_list is added and the file is written out.
+    key_lists must be an iterable of KeyList objects.
 
     """
     config = configparser.ConfigParser(interpolation=None)
-    config.read(fname)
 
-    # If the section for this key list doesn't exist, add one
-    if not config.has_section(key_list.indicator):
-        config.add_section(key_list.indicator)
+    for key_list in key_lists:
+        config[key_list.indicator] = {}
+        config[key_list.indicator]['lugs'] = key_list.lugs
+        for n, wheel in enumerate(WHEELS):
+            config[key_list.indicator][wheel] = key_list.pin_list[n]
+        config[key_list.indicator]['check'] = key_list.letter_check
 
-    # Now update it
-    section = config[key_list.indicator]
-    section['lugs'] = key_list.lugs
-    for n, wheel in enumerate(WHEELS):
-        section[wheel] = key_list.pin_list[n]
-    section['check'] = key_list.letter_check
-
-    # Write the file
     with open(fname, 'w') as fp:
         config.write(fp)

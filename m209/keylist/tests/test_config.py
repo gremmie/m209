@@ -13,7 +13,7 @@ import tempfile
 import unittest
 
 from ..key_list import KeyList
-from ..config import read_key_list, write_key_list
+from ..config import read_key_list, write
 
 
 @contextmanager
@@ -48,11 +48,10 @@ class ConfigFileTestCase(unittest.TestCase):
         os.close(fd)
 
         with file_remover(path):
-            write_key_list(path, key_list1)
+            write(path, [key_list1])
             key_list2 = read_key_list(path, key_list1.indicator)
 
             self.assertEqual(key_list1, key_list2)
 
             kl3 = read_key_list(path, 'BB')
             self.assertTrue(kl3 is None)
-
