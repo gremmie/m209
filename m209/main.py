@@ -10,16 +10,22 @@ import argparse
 import logging
 import os.path
 import random
+import re
 import sys
 
+from . import M209Error
+from .converter import M209_ALPHABET_SET
+from .data import KEY_WHEEL_DATA
 from .keylist.generate import generate_key_list
 from .keylist.key_list import valid_indicator, IndicatorIter
-from .keylist.config import write as write_config
+from .keylist.config import write as write_config, read_key_list
+from .procedure import StdProcedure
 
 
 DESC = "M-209 simulator and utility program"
 DEFAULT_KEY_LIST = 'm209keys.cfg'
 LOG_CHOICES = ['debug', 'info', 'warning', 'error', 'critical']
+SYS_IND_RE = re.compile(r'^[A-Z]{1}$')
 
 
 def validate_key_list_indicator(s):
@@ -29,10 +35,12 @@ def validate_key_list_indicator(s):
     Returns the string value if valid, otherwise raises an ArgumentTypeError.
 
     """
-    if s == '*' or valid_indicator(s):
-        return s
+    if len(s) == 2:
+        s = s.upper()
+        if valid_indicator(s):
+            return s
 
-    raise argparse.ArgumentTypeError('must be * or in the range AA-ZZ')
+    raise argparse.ArgumentTypeError('must be in the range AA-ZZ')
 
 
 def validate_num_key_lists(s):
@@ -54,9 +62,55 @@ def validate_num_key_lists(s):
     return val
 
 
+def validate_ext_indicator(s):
+    """Validation function for the external message indicator option.
+
+    Returns the string value if valid, otherwise raises an ArgumentTypeError.
+
+    """
+    if len(s) == 6:
+        s = s.upper()
+        for n, c in enumerate(s):
+            if c not in KEY_WHEEL_DATA[n][0]:
+                break
+        else:
+            return s
+
+    raise argparse.ArgumentTypeError(
+        "{} is not a valid external message indicator".format(s))
+
+
+def validate_sys_indicator(s):
+    """Validation function for the system message indicator option.
+
+    Returns the string value if valid, otherwise raises an ArgumentTypeError.
+
+    """
+    if len(s) == 1:
+        s = s.upper()
+        if s in M209_ALPHABET_SET:
+            return s
+
+    raise argparse.ArgumentTypeError('value must be 1 letter')
+
+
 def encrypt(args):
     """Encrypt subcommand processor"""
     print('Encrypting!', args)
+
+    logging.info("Encrypting using key file %s", args.file)
+    if not os.path.isfile(args.file):
+        sys.exit("key list file not found: {}\n".format(args.file))
+
+    # Get a key list from the key list file
+    key_list = read_key_list(args.file, args.key_list_ind)
+    if not key_list:
+        sys.exit("key list not found in file: {}\n".format(args.file))
+
+    proc = StdProcedure(key_list=key_list)
+    plaintext = "HELLOZWORLDX"
+    ct = proc.encrypt(plaintext, ext_msg_ind=args.ext_ind, sys_ind=args.sys_ind)
+    print(ct)
 
 
 def decrypt(args):
@@ -71,7 +125,7 @@ def keygen(args):
     if not args.overwrite and os.path.exists(args.file):
         sys.exit("File '{}' exists. Use -o to overwrite\n".format(args.file))
 
-    if args.start == '*':   # random indicators
+    if args.start is None:   # random indicators
         indicators = random.sample([i for i in IndicatorIter()], args.number)
         indicators.sort()
     else:
@@ -98,22 +152,25 @@ def main(argv=None):
     subparsers = parser.add_subparsers(title='list of commands',
         description='type %(prog)s {command} -h for help on {command}')
 
-    # create the parser for encrypt
+    # create the sub-parser for encrypt
     enc_parser = subparsers.add_parser('encrypt', aliases=['en'],
         help='encrypt text')
-    enc_parser.add_argument('-k', '--keylist', default=DEFAULT_KEY_LIST,
+    enc_parser.add_argument('-f', '--file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
-    enc_parser.add_argument('-i', '--keylist-indicator',
-        help='2 letter key list indicator')
-    enc_parser.add_argument('-p', '--plaintext',
-        help='plaintext string to encrypt; prompted if omitted')
-    enc_parser.add_argument('-e', '--ext-msg-ind',
-        help='6 letter external message indicator; if omitted a random one is used')
-    enc_parser.add_argument('-s', '--sys-ind',
-        help='1 letter system indicator; if omitted a random one is used')
+    enc_parser.add_argument('-p', '--plaintext', default='-',
+        help='path to plaintext file or - for stdin [default: %(default)s]')
+    enc_parser.add_argument('-k', '--key-list-ind', metavar='XX',
+        type=validate_key_list_indicator,
+        help='2-letter key list indicator; if omitted a random one is used')
+    enc_parser.add_argument('-e', '--ext-ind', metavar='ABCDEF',
+        type=validate_ext_indicator,
+        help='6-letter external message indicator; if omitted a random one is used')
+    enc_parser.add_argument('-s', '--sys-ind', metavar='S',
+        type=validate_sys_indicator,
+        help='1-letter system indicator; if omitted a random one is used')
     enc_parser.set_defaults(subcommand=encrypt)
 
-    # create the parser for decrypt
+    # create the sub-parser for decrypt
     dec_parser = subparsers.add_parser('decrypt', aliases=['de'],
         help='decrypt text')
     dec_parser.add_argument('-k', '--keylist', default=DEFAULT_KEY_LIST,
@@ -122,7 +179,7 @@ def main(argv=None):
         help='ciphertext string to decrypt; prompted if omitted')
     dec_parser.set_defaults(subcommand=decrypt)
 
-    # create the parser for generating key lists
+    # create the sub-parser for generating key lists
 
     kg_parser = subparsers.add_parser('keygen', aliases=['kg'],
         description='Generate key list file',
@@ -131,9 +188,9 @@ def main(argv=None):
         help='path to key list file [default: %(default)s]')
     kg_parser.add_argument('-o', '--overwrite', action='store_true',
         help='overwrite key list file if it exists')
-    kg_parser.add_argument('-s', '--start', metavar='XX', default='AA',
+    kg_parser.add_argument('-s', '--start', metavar='XX',
         type=validate_key_list_indicator,
-        help='starting indicator [default: %(default)s, * for random]')
+        help='starting indicator; if omitted, random indicators are used')
     kg_parser.add_argument('-n', '--number', type=validate_num_key_lists, default=1,
         help='number of key lists to generate [default: %(default)s]')
     kg_parser.set_defaults(subcommand=keygen)
@@ -149,6 +206,8 @@ def main(argv=None):
         sys.exit('{}\n'.format(ex))
     except KeyboardInterrupt:
         sys.exit('Interrupted\n')
+    except M209Error as ex:
+        sys.exit('{}\n'.format(ex))
 
 
 if __name__ == '__main__':
