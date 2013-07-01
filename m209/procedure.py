@@ -153,12 +153,11 @@ class StdProcedure:
         # If the final group in the ciphertext has less than 5 letters, pad with
         # X's to make a complete group:
 
-        total_len = len(ciphertext)
-        num_groups = total_len // 5
-        num_spaces = num_groups - 1 if num_groups >= 2 else 0
-        x_count = 5 - (total_len - num_spaces) % 5
-        if 0 < x_count < 5:
-            ciphertext = ciphertext + 'X' * x_count
+        i = ciphertext.rfind(' ')
+        if i != -1:
+            x_count = 6 - (len(ciphertext) - i)
+            if x_count:
+                ciphertext = ciphertext + 'X' * x_count
 
         # Add the message indicators to pad each end of the message
 
