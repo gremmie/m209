@@ -45,6 +45,13 @@ class ProcedureTestCase(unittest.TestCase):
         plaintext = self.proc.decrypt()
         self.assertEqual(plaintext[:len(PLAINTEXT)], PLAINTEXT)
 
+    def test_encrypt_padding(self):
+        pt = 'THE PIZZA HAS ARRIVED STOP WILL PLAY DAYZ AFTER SUPPER STOP'
+        ct = self.proc.encrypt(pt)
+        groups = ct.split()
+        counts_good = [len(group) == 5 for group in groups]
+        self.assertTrue(all(counts_good))
+
     def test_blair_decrypt(self):
 
         ciphertext = (

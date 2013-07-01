@@ -137,7 +137,35 @@ def encrypt(args):
 
 def decrypt(args):
     """Decrypt subcommand processor"""
-    print('Decrypting!', args)
+    logging.info("Decrypting using key file %s", args.file)
+
+    # Check for key list file
+    if not os.path.isfile(args.file):
+        sys.exit("key list file not found: {}\n".format(args.file))
+
+    # Read contents of ciphertext file
+    if args.ciphertext == '-':
+        msg = sys.stdin.read()
+    else:
+        with open(args.ciphertext, 'r') as fp:
+            msg = fp.read()
+
+    msg = msg.strip()
+
+    # Start the decrypt procedure
+    proc = StdProcedure()
+    params = proc.set_decrypt_message(msg)
+
+    # Find a key list for the message
+    key_list = read_key_list(args.file, params.key_list_ind)
+    if key_list is None:
+        sys.exit("Could not find key list {} in {}\n".format(
+            params.key_list_ind, args.file))
+
+    # Install the key list and perform the decrypt operation
+    proc.set_key_list(key_list)
+    plaintext = proc.decrypt()
+    print(plaintext)
 
 
 def keygen(args):
@@ -195,10 +223,10 @@ def main(argv=None):
     # create the sub-parser for decrypt
     dec_parser = subparsers.add_parser('decrypt', aliases=['de'],
         help='decrypt text')
-    dec_parser.add_argument('-k', '--keylist', default=DEFAULT_KEY_LIST,
+    dec_parser.add_argument('-f', '--file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
-    dec_parser.add_argument('-c', '--ciphertext',
-        help='ciphertext string to decrypt; prompted if omitted')
+    dec_parser.add_argument('-c', '--ciphertext', default='-',
+        help='path to ciphertext file or - for stdin [default: %(default)s]')
     dec_parser.set_defaults(subcommand=decrypt)
 
     # create the sub-parser for generating key lists
