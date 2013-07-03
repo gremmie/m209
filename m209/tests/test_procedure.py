@@ -46,11 +46,14 @@ class ProcedureTestCase(unittest.TestCase):
         self.assertEqual(plaintext[:len(PLAINTEXT)], PLAINTEXT)
 
     def test_encrypt_padding(self):
-        pt = 'THE PIZZA HAS ARRIVED STOP WILL PLAY DAYZ AFTER SUPPER STOP'
-        ct = self.proc.encrypt(pt)
-        groups = ct.split()
-        counts_good = [len(group) == 5 for group in groups]
-        self.assertTrue(all(counts_good))
+        """Ensure we pad the final group out to 5 chars."""
+
+        for n in range(1, 21):
+            pt = 'A' * n
+            ct = self.proc.encrypt(pt)
+            groups = ct.split()
+            counts_good = [len(group) == 5 for group in groups]
+            self.assertTrue(all(counts_good), "Failed on n = %s; ct = %s" % (n, ct))
 
     def test_blair_decrypt(self):
 
