@@ -156,8 +156,11 @@ class StdProcedure:
         i = ciphertext.rfind(' ')
         if i != -1:
             x_count = 6 - (len(ciphertext) - i)
-            if x_count:
-                ciphertext = ciphertext + 'X' * x_count
+        else:   # only 1 group
+            x_count = 5 - len(ciphertext)
+
+        if x_count:
+            ciphertext = ciphertext + 'X' * x_count
 
         # Add the message indicators to pad each end of the message
 
