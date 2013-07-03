@@ -203,7 +203,7 @@ def main(argv=None):
         description='type %(prog)s {command} -h for help on {command}')
 
     # create the sub-parser for encrypt
-    enc_parser = subparsers.add_parser('encrypt', aliases=['en'],
+    enc_parser = subparsers.add_parser('encrypt', aliases=['enc'],
         help='encrypt text')
     enc_parser.add_argument('-z', '--key-file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
@@ -221,7 +221,7 @@ def main(argv=None):
     enc_parser.set_defaults(subcommand=encrypt)
 
     # create the sub-parser for decrypt
-    dec_parser = subparsers.add_parser('decrypt', aliases=['de'],
+    dec_parser = subparsers.add_parser('decrypt', aliases=['dec'],
         help='decrypt text')
     dec_parser.add_argument('-z', '--key-file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
@@ -231,7 +231,7 @@ def main(argv=None):
 
     # create the sub-parser for generating key lists
 
-    kg_parser = subparsers.add_parser('keygen', aliases=['kg'],
+    kg_parser = subparsers.add_parser('keygen', aliases=['key'],
         description='Generate key list file',
         help='generate key list')
     kg_parser.add_argument('-z', '--key-file', default=DEFAULT_KEY_LIST,
