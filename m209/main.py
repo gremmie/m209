@@ -116,15 +116,15 @@ def plaintext_filter(fp):
 
 def encrypt(args):
     """Encrypt subcommand processor"""
-    logging.info("Encrypting using key file %s", args.file)
+    logging.info("Encrypting using key file %s", args.key_file)
 
     # Get a key list from the key list file
-    if not os.path.isfile(args.file):
-        sys.exit("key list file not found: {}\n".format(args.file))
+    if not os.path.isfile(args.key_file):
+        sys.exit("key list file not found: {}\n".format(args.key_file))
 
-    key_list = read_key_list(args.file, args.key_list_ind)
+    key_list = read_key_list(args.key_file, args.key_list_ind)
     if not key_list:
-        sys.exit("key list not found in file: {}\n".format(args.file))
+        sys.exit("key list not found in file: {}\n".format(args.key_file))
 
     # Get the plaintext
     infile = open(args.plaintext, 'r') if args.plaintext != '-' else sys.stdin
@@ -137,11 +137,11 @@ def encrypt(args):
 
 def decrypt(args):
     """Decrypt subcommand processor"""
-    logging.info("Decrypting using key file %s", args.file)
+    logging.info("Decrypting using key file %s", args.key_file)
 
     # Check for key list file
-    if not os.path.isfile(args.file):
-        sys.exit("key list file not found: {}\n".format(args.file))
+    if not os.path.isfile(args.key_file):
+        sys.exit("key list file not found: {}\n".format(args.key_file))
 
     # Read contents of ciphertext file
     if args.ciphertext == '-':
@@ -157,10 +157,10 @@ def decrypt(args):
     params = proc.set_decrypt_message(msg)
 
     # Find a key list for the message
-    key_list = read_key_list(args.file, params.key_list_ind)
+    key_list = read_key_list(args.key_file, params.key_list_ind)
     if key_list is None:
         sys.exit("Could not find key list {} in {}\n".format(
-            params.key_list_ind, args.file))
+            params.key_list_ind, args.key_file))
 
     # Install the key list and perform the decrypt operation
     proc.set_key_list(key_list)
@@ -170,10 +170,10 @@ def decrypt(args):
 
 def keygen(args):
     """Key list generation subcommand processor"""
-    logging.info("Creating key list file: %s", args.file)
+    logging.info("Creating key list file: %s", args.key_file)
 
-    if not args.overwrite and os.path.exists(args.file):
-        sys.exit("File '{}' exists. Use -o to overwrite\n".format(args.file))
+    if not args.overwrite and os.path.exists(args.key_file):
+        sys.exit("File '{}' exists. Use -o to overwrite\n".format(args.key_file))
 
     if args.start is None:   # random indicators
         indicators = random.sample([i for i in IndicatorIter()], args.number)
@@ -189,7 +189,7 @@ def keygen(args):
 
     key_lists = (generate_key_list(indicator) for indicator in indicators)
 
-    write_config(args.file, key_lists)
+    write_config(args.key_file, key_lists)
 
 
 def main(argv=None):
@@ -205,7 +205,7 @@ def main(argv=None):
     # create the sub-parser for encrypt
     enc_parser = subparsers.add_parser('encrypt', aliases=['en'],
         help='encrypt text')
-    enc_parser.add_argument('-f', '--file', default=DEFAULT_KEY_LIST,
+    enc_parser.add_argument('-z', '--key-file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
     enc_parser.add_argument('-p', '--plaintext', default='-',
         help='path to plaintext file or - for stdin [default: %(default)s]')
@@ -223,7 +223,7 @@ def main(argv=None):
     # create the sub-parser for decrypt
     dec_parser = subparsers.add_parser('decrypt', aliases=['de'],
         help='decrypt text')
-    dec_parser.add_argument('-f', '--file', default=DEFAULT_KEY_LIST,
+    dec_parser.add_argument('-z', '--key-file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
     dec_parser.add_argument('-c', '--ciphertext', default='-',
         help='path to ciphertext file or - for stdin [default: %(default)s]')
@@ -234,7 +234,7 @@ def main(argv=None):
     kg_parser = subparsers.add_parser('keygen', aliases=['kg'],
         description='Generate key list file',
         help='generate key list')
-    kg_parser.add_argument('-f', '--file', default=DEFAULT_KEY_LIST,
+    kg_parser.add_argument('-z', '--key-file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
     kg_parser.add_argument('-o', '--overwrite', action='store_true',
         help='overwrite key list file if it exists')
