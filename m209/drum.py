@@ -127,8 +127,8 @@ class Drum:
 
         bars = sorted(cnt.items())
         if shortcut:
-            bars = ['{}-{}*{}'.format(p[0][0], p[0][1], p[1]) if p[1] > 1 else (
-                    '{}-{}'.format(p[0][0], p[0][1])) for p in bars]
+            bars = ['{}-{}*{}'.format(m, n, c) if c > 1 else (
+                    '{}-{}'.format(m, n)) for (m, n), c in bars]
         else:
             bars2 = []
             for p in bars:
@@ -136,7 +136,7 @@ class Drum:
                     bars2.append(p[0])
 
             bars2.extend([(0, 0)] * (27 - len(bars2)))
-            bars = ['{}-{}'.format(p[0], p[1]) for p in bars2]
+            bars = ['{}-{}'.format(m, n) for (m, n) in bars2]
 
         return ' '.join(bars)
 
