@@ -98,8 +98,8 @@ def validate_sys_indicator(s):
 def plaintext_filter(fp):
     """Generator function to filter input plaintext.
 
-    * ASCII upper case letters are passed as-is.
-    * ASCII lower case letters are converted to upper case.
+    * upper case letters are passed as-is.
+    * lower case letters are converted to upper case.
     * Whitespace characters are converted to 'Z'.
     * All other characters are dropped from the input.
 

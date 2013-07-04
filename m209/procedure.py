@@ -132,10 +132,9 @@ class StdProcedure:
             ext_msg_ind = self.m_209.set_random_key_wheels()
 
         # Ensure we have a valid system indicator
-        if sys_ind:
-            if sys_ind not in M209_ALPHABET_SET:
-                raise ProcedureError("invalid system indicator {}".format(sys_ind))
-        else:
+        if sys_ind and sys_ind not in M209_ALPHABET_SET:
+            raise ProcedureError("invalid system indicator {}".format(sys_ind))
+        elif sys_ind is None:
             sys_ind = random.choice(M209_ALPHABET_LIST)
 
         # Generate internal message indicator
@@ -183,7 +182,7 @@ class StdProcedure:
 
         """
         # See if we need to group the message.
-        if not ' ' in msg:
+        if ' ' not in msg:
             msg = group_text(msg)
 
         # Perform some basic checks on the message to see if it looks like an
