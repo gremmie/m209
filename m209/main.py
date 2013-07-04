@@ -118,6 +118,11 @@ def encrypt(args):
     """Encrypt subcommand processor"""
     logging.info("Encrypting using key file %s", args.key_file)
 
+    if args.text and args.file:
+        sys.exit("Please supply either -f/--file or -t/--text, not both\n")
+    elif not args.text and not args.file:
+        sys.exit("Please supply either -f/--file or -t/--text\n")
+
     # Get a key list from the key list file
     if not os.path.isfile(args.key_file):
         sys.exit("key list file not found: {}\n".format(args.key_file))
@@ -127,8 +132,11 @@ def encrypt(args):
         sys.exit("key list not found in file: {}\n".format(args.key_file))
 
     # Get the plaintext
-    infile = open(args.plaintext, 'r') if args.plaintext != '-' else sys.stdin
-    plaintext = plaintext_filter(infile)
+    if args.text:
+        plaintext = plaintext_filter(args.text)
+    else:
+        infile = open(args.file, 'r') if args.file != '-' else sys.stdin
+        plaintext = plaintext_filter(infile)
 
     proc = StdProcedure(key_list=key_list)
     ct = proc.encrypt(plaintext, ext_msg_ind=args.ext_ind, sys_ind=args.sys_ind)
@@ -139,18 +147,26 @@ def decrypt(args):
     """Decrypt subcommand processor"""
     logging.info("Decrypting using key file %s", args.key_file)
 
+    if args.text and args.file:
+        sys.exit("Please supply either -f/--file or -t/--text, not both\n")
+    elif not args.text and not args.file:
+        sys.exit("Please supply either -f/--file or -t/--text\n")
+
     # Check for key list file
     if not os.path.isfile(args.key_file):
         sys.exit("key list file not found: {}\n".format(args.key_file))
 
-    # Read contents of ciphertext file
-    if args.ciphertext == '-':
-        msg = sys.stdin.read()
+    # Get the ciphertext to decrypt
+    if args.text:
+        msg = args.text
     else:
-        with open(args.ciphertext, 'r') as fp:
-            msg = fp.read()
-
-    msg = msg.strip()
+        # Read contents of ciphertext file
+        if args.file == '-':
+            msg = sys.stdin.read()
+        else:
+            with open(args.file, 'r') as fp:
+                msg = fp.read()
+        msg = msg.strip()
 
     # Start the decrypt procedure
     proc = StdProcedure()
@@ -204,11 +220,15 @@ def main(argv=None):
 
     # create the sub-parser for encrypt
     enc_parser = subparsers.add_parser('encrypt', aliases=['enc'],
-        help='encrypt text')
+        description='Encrypt text from a file or command-line',
+        help='encrypt text from file or command-line',
+        epilog='Either the -f/--file or -t/--text arguments must be supplied')
     enc_parser.add_argument('-z', '--key-file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
-    enc_parser.add_argument('-p', '--plaintext', default='-',
-        help='path to plaintext file or - for stdin [default: %(default)s]')
+    enc_parser.add_argument('-f', '--file',
+        help='path to plaintext file or - for stdin')
+    enc_parser.add_argument('-t', '--text',
+        help='text string to encrypt')
     enc_parser.add_argument('-k', '--key-list-ind', metavar='XX',
         type=validate_key_list_indicator,
         help='2-letter key list indicator; if omitted a random one is used')
@@ -222,11 +242,15 @@ def main(argv=None):
 
     # create the sub-parser for decrypt
     dec_parser = subparsers.add_parser('decrypt', aliases=['dec'],
-        help='decrypt text')
+        description='Decyrpt text from a file or command-line',
+        help='decrypt text from file or command-line',
+        epilog='Either the -f/--file or -t/--text arguments must be supplied')
     dec_parser.add_argument('-z', '--key-file', default=DEFAULT_KEY_LIST,
         help='path to key list file [default: %(default)s]')
-    dec_parser.add_argument('-c', '--ciphertext', default='-',
-        help='path to ciphertext file or - for stdin [default: %(default)s]')
+    dec_parser.add_argument('-f', '--file',
+        help='path to ciphertext file or - for stdin')
+    dec_parser.add_argument('-t', '--text',
+        help='text string to decrypt')
     dec_parser.set_defaults(subcommand=decrypt)
 
     # create the sub-parser for generating key lists
