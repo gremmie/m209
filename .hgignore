@@ -1,5 +1,5 @@
 syntax: glob
 *.pyc
 *.swp
-m209/docs/build
+docs/_build
 dist
