@@ -144,11 +144,40 @@ more details, consult the command-line ``m209`` documentation.
 Library Tutorial
 ----------------
 
+Here is one way to perform the encrypt and decrypt operations from the
+command-line tutorial, above. In order to produce the same output, we explicity
+specify the encryption parameters: the key list, the external message
+indicator, and the system indicator. These parameters are explained in the
+reference documentation.
+
+.. literalinclude:: ../examples/encrypt.py
+
+This program outputs::
+
+   IIPDU FHLMB LASGD KTLDO OSRMZ PWGEB HYMCB IKSPT IUEPF FUHEO NQTWI VTDPC GSPQX IIPDU FHLMB
+
+A decrypt is just a bit more complicated. After constructing a ``StdProcedure``
+object, you hand it the encrypted message to analyze. The procedure object
+examines the groups in the message and extracts all the indicators. These are
+returned as a ``DecryptParams`` named tuple which indicates, amongst other
+things, what key list is required. It is then up to you to obtain this key list
+somehow. Here we use the ``read_key_list()`` function to do so. After
+installing the key list into the procedure object, you can finally call
+``decrypt()``:
+
+.. literalinclude:: ../examples/decrypt.py
+
+This program prints::
+
+   THE PI  A HAS ARRIVED STOP NO SIGN OF ENEMY FORCES STOP
+
+
 Requirements
 ------------
 
 ``m209`` is written in Python_, specifically Python 3.3. It has no other
 requirements or dependencies.
+
 
 Installation
 ------------
@@ -159,8 +188,8 @@ using pip_::
    $ pip install m209                  # install
    $ pip install --upgrade m209        # upgrade
 
-You may also download a tarball or .zip file of the latest code using the "get
-source" link on the `m209 Bitbucket page`_. Alternatively if you use
+You may also download a tarball or .zip file of the latest code by visiting the
+Downloads tab on the `m209 Bitbucket page`_. Alternatively if you use
 Mercurial_, you can clone the repository with the following command::
 
    $ hg clone https://bitbucket.org/bgneal/m209
