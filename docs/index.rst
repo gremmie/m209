@@ -90,7 +90,7 @@ film was also highly instructive.
 #. `M-209 at Wikipedia <http://en.wikipedia.org/wiki/M-209>`_
 #. `Mark J. Blair's Converter M-209-B <http://www.nf6x.net/2009/02/converter-m-209-b/>`_
 #. `1942 M-209 Manual <http://maritime.org/tech/csp1500inst.htm>`_
-#. `1944 M-209 Manual scan <http://www.ilord.com/m209manual.html>`_
+#. `1944 M-209 Manual <http://www.ilord.com/m209manual.html>`_
 #. `Official M-209 Training Film <http://www.youtube.com/playlist?list=PLCPgncK_sTnEny2-uoTV-1_GC72zo-vKq>`_ - This is a 4 video YouTube playlist of an actual 1940's era US War Department training film. Demonstrates the M-209 and operational procedures. Very interesting!
 #. `Transcript of Training Film <http://www.ilord.com/m209-training.html>`_ -
    Transcript of the above film.
