@@ -191,8 +191,9 @@ The options to the ``encrypt`` command are described below.
    Likewise with punctuation. To make encryption more convenient, the ``m209``
    program will accept spaces and automatically convert them to the letter
    ``Z``. Lowercase letters will automatically be converted to uppercase. All
-   other characters will produce an error. This applies to both text read on
-   the command-line with the ``-t`` option and text read from files (``-f``).
+   other characters will be silently dropped from the input. This applies to
+   both text read on the command-line with the ``-t`` option and text read from
+   files (``-f``).
 
 Encrypt examples
 ++++++++++++++++
@@ -201,6 +202,7 @@ To encrypt a simple string on the command-line using the default key file and
 random encryption parameters::
 
    $ m209 encrypt -t "Rendezvous at zero seven thirty"
+   BBEPH SSLBY RKHWO OBAJB VYQEQ NJHGV FWRCJ UZHMB PXXXX BBEPH SSLBY
 
 To save the encrypted text to a file::
 
@@ -214,3 +216,83 @@ To explicitly specify encryption parameters, and read text from ``stdin``::
 
    $ cat message.txt | m209 enc --file=- -k SU -e ZQGMFO -s A 
 
+
+Decrypt sub-command
+-------------------
+
+``decrypt``, or ``dec``, is the sub-command used to decrypt text. To get help
+on the ``decrypt`` command, type the following::
+
+   $ m209 decrypt --help
+   usage: m209 decrypt [-h] [-z KEY_FILE] [-f FILE] [-t TEXT]
+
+   Decyrpt text from a file or command-line
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     -z KEY_FILE, --key-file KEY_FILE
+                           path to key list file [default: m209keys.cfg]
+     -f FILE, --file FILE  path to ciphertext file or - for stdin
+     -t TEXT, --text TEXT  text string to decrypt
+
+   Either the -f/--file or -t/--text arguments must be supplied
+
+The options to the ``decrypt`` command are described below.
+
+``-z`` or ``--key-file``
+   This option names the key list file. If not given, the default of
+   ``m209keys.cfg`` is used.
+
+``-t`` or ``--file``
+   This option specifies the file that contains the text to decrypt. If the
+   filename is given as ``-`` then input is read directly from ``stdin``. Note
+   that either this option or the ``-t`` option must be specified, but not
+   both.
+
+``-t`` or ``--text``
+   This option specifies the text to decrypt on the command-line. Depending
+   upon your system, you'll probably have to quote or escape your text. Note
+   that you must either specify this option or the ``-f`` option, but not both.
+
+.. NOTE::
+
+   The first and last 2 groups of an encrypted message contain the information
+   needed to decrypt the message: the system indicator, the external message
+   indicator, and the key list indicator. If the key list file given to the
+   decrypt command does not contain the key list used to encrypt the message,
+   then the message cannot be decrypted and an error message will be displayed.
+
+Decrypt examples
+++++++++++++++++
+
+To decrypt a simple string on the command-line using the default key file::
+
+   $ m209 decrypt -t "BBEPH SSLBY RKHWO OBAJB VYQEQ NJHGV FWRCJ UZHMB PXXXX BBEPH SSLBY"
+   RENDE VOUS AT  ERO SEVEN THIRTYXSJQ
+
+To save the decrypted text to a file::
+
+   $ m209 decrypt -t "BBEPH SSLBY RKHWO OBAJB VYQEQ NJHGV FWRCJ UZHMB PXXXX BBEPH SSLBY" > msg.txt
+
+To read the contents of a file and decrypt it, saving it to a new file::
+
+   $ m209 dec -f secret.txt > msg.txt
+
+To decrypt from ``stdin``::
+
+   $ cat secret.txt | m209 dec -f -
+   RENDE VOUS AT  ERO SEVEN THIRTYXSJQ
+
+
+.. NOTE::
+
+   In this example, the last group of the encrypted message only has one
+   letter. It was padded out to five letters with ``X``'s by the encryption
+   process, and thus four "garbage" letters appear at the end in the decrypted
+   output.
+
+   Note also that the ``Z`` in ``RENDEZVOUS`` and ``ZERO`` were converted to
+   spaces by the decrypt process.
+
+   In both of these cases the operator would have to "fix up" the message
+   before passing it up the chain of command.
