@@ -137,9 +137,12 @@ class StdProcedure:
         elif sys_ind is None:
             sys_ind = random.choice(M209_ALPHABET_LIST)
 
-        # Generate internal message indicator
+        # Generate internal message indicator.
+        # Note that the training film instructs the operator to encipher the
+        # system indicator 12 times. Occasionally I have found this is not
+        # enough letters. We double it to 24.
 
-        int_msg_ind = self.m_209.encrypt(sys_ind * 12, group=False)
+        int_msg_ind = self.m_209.encrypt(sys_ind * 24, group=False)
 
         self.m_209.letter_counter = 0
 
