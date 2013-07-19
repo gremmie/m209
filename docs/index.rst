@@ -42,10 +42,11 @@ Documentation
 Contents:
 
 .. toctree::
+   :maxdepth: 3
+
    tutorial
    commandline
    library
-   :maxdepth: 2
 
 
 Requirements
