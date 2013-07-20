@@ -102,7 +102,7 @@ film was also highly instructive.
    Graphical M-209 simulator
 #. `Mark J. Blair's Hagelin project suite at GitHub <https://github.com/NF6X/hagelin>`_
    - M-209 simulator written in C++
-#. `Jean-François BOUCHAUDY's Crypto Pages <http://www.jfbouch.fr/crypto/>`_
+#. `Jean-François Bouchaudy's Crypto Pages <http://www.jfbouch.fr/crypto/>`_
    - Includes another Python-based M-209 simulator and a M-209 challenge. In French.
 #. `The C-38 / M-209 Cipher Machine <http://hem.passagen.se/tan01/c38.html>`_
    - Another M-209 page. This one has useful info on creating key lists and a C-38 simulator written in C.
