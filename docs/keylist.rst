@@ -15,6 +15,8 @@ Key lists are represented as a named tuple called ``KeyList``.
    * ``letter_check`` - a string representing the letter check used to verify
      operator settings; if unknown this can be ``None`` or an empty string
    
+.. _lug-settings:
+
 Lug settings format
 ~~~~~~~~~~~~~~~~~~~
 
@@ -45,6 +47,8 @@ strings describe identical drum configurations::
 
    lugs1 = '2-4 2-4 2-4 0-1 0-1'
    lugs2 = '2-4*3 0-1*2'
+
+.. _pin-settings:
 
 Key wheel pin settings
 ~~~~~~~~~~~~~~~~~~~~~~
