@@ -17,6 +17,14 @@ procedures, you would use the M209 class directly.
   :param lugs: either a lug settings list or string as per :meth:`set_drum_lugs`
   :param pin_list: a list of six strings each formatted as per :ref:`pin-settings`
 
+``M209`` objects have the following attributes.
+
+   .. attribute:: letter_count
+
+      This attribute represents the *letter counter* functionality. It is an
+      integer that is incremented after every letter is encrypted or decrypted.
+      It may be set to any integer value or examined at any time.
+
 ``M209`` objects support the following methods.
 
    .. method:: set_pins(n, effective_pins)
