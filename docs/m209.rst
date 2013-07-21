@@ -4,11 +4,12 @@ M209 Class
 Naturally, the ``m209`` library includes a class that simulates a M-209
 converter. The :class:`~m209.converter.M209` class allows you to experiment
 with all moving parts of an M-209, including encrypting and decrypting
-messages. Keep in mind there is a higher level class, StdProcedure, that
-encapsulates all the steps of the standard encrypting and decrypting
-operations, including generating indicators and placing or removing them from
-messages. However if you need lower-level access or you are inventing your own
-procedures, you would use the M209 class directly.
+messages. Keep in mind there is a higher level class,
+:class:`~m209.procedure.StdProcedure`, that encapsulates all the steps of the
+standard encrypting and decrypting operations, including generating indicators
+and placing or removing them from messages. However if you need lower-level
+access or you are inventing your own procedures, you would use the M209 class
+directly.
 
 .. class:: m209.converter.M209([lugs=None[, pin_list=None]])
 

@@ -113,7 +113,7 @@ functions found in the ``m209.keylist.config`` module.
     ``key_lists`` must be an iterable of :class:`~m209.keylist.KeyList` objects.
 
 Key list file format
-++++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~~
 
 An example key list file in config file format is presented below. The label
 for each section of the file is the key list indicator.
