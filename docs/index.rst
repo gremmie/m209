@@ -58,21 +58,29 @@ requirements or dependencies.
 Installation
 ------------
 
-``m209`` is available on the `Python Package Index`_ (PyPI). You can install it
-using pip_::
+``m209`` is available on the `Python Package Index`_ (PyPI).
+
+You can install it using pip_::
 
    $ pip install m209                  # install
    $ pip install --upgrade m209        # upgrade
 
 You may also download a tarball or .zip file of the latest code by visiting the
-Downloads tab on the `m209 Bitbucket page`_. Alternatively if you use
-Mercurial_, you can clone the repository with the following command::
+`m209 Bitbucket page`_. Alternatively if you use Mercurial_, you can clone the
+repository with the following command::
 
    $ hg clone https://bitbucket.org/bgneal/m209
 
-If you did not use pip, you can install with this command::
+If you did not use pip (you downloaded or cloned the code yourself), you can
+install with::
 
+   $ cd where-you-extracted-m209
    $ python setup.py install
+
+To run the unit tests::
+
+   $ cd where-you-extracted-m209
+   $ python -m unittest discover -b
 
 Support & Source
 ----------------
