@@ -80,6 +80,8 @@ Support & Source
 All support takes place at the `m209 Bitbucket page`_. Please enter any
 feature requests or bugs into the `issue tracker`_.
 
+.. _references-label:
+
 References
 ----------
 
