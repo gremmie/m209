@@ -8,5 +8,7 @@ the major classes and functions.
 .. toctree::
    :maxdepth: 3
 
+   exceptions
    keylist
    m209
+   procedure
