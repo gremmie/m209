@@ -3,3 +3,4 @@ syntax: glob
 *.swp
 docs/_build
 dist
+MANIFEST
