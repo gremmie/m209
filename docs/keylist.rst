@@ -32,9 +32,9 @@ between 0 and 6, inclusive. Each integer represents a lug position where
 m & n are both non-zero, they cannot be equal.
 
 If a string has less than 27 pairs, it is assumed all remaining bars have both
-lugs in the neutral (0) positions.
+lugs in the neutral positions, i.e. ``0-0``.
 
-Order of the pairs within the string does not matter.
+The order of the pairs within the string does not matter.
 
 To reduce typing and to aid in readability, an alternate shortcut notation is
 supported::
@@ -112,6 +112,8 @@ functions found in the ``m209.keylist.config`` module.
 
     ``key_lists`` must be an iterable of :class:`~m209.keylist.KeyList` objects.
 
+.. _key-list-file-format-label:
+
 Key list file format
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -144,9 +146,10 @@ Generating key lists
 ~~~~~~~~~~~~~~~~~~~~
 
 The ``m209`` library contains a function to pseudo-randomly generate a key list
-that is based on the procedure described in the 1944 M-209 manual.
+that is based on the procedure described in the 1944 M-209 manual
+(see :ref:`references-label` [4]).
 
-.. function:: m209.keylist.generate.generate_key_list(indicator[, lug_selection=None, max_lug_attempts=MAX_LUG_ATTEMPTS, max_pin_attempts=MAX_PIN_ATTEMPTS])
+.. function:: m209.keylist.generate.generate_key_list(indicator[, lug_selection=None[, max_lug_attempts=MAX_LUG_ATTEMPTS[, max_pin_attempts=MAX_PIN_ATTEMPTS]]])
 
    The only required parameter is ``indicator``, the two-letter indicator for
    the key list.

@@ -4,7 +4,7 @@ Command-line Reference
 Overview
 --------
 
-The ``m209`` command-line utility peforms three functions:
+The ``m209`` command-line utility performs three functions:
 
 * Creates key list files
 * Encrypts text, either given on the command line or read from a file
@@ -154,7 +154,7 @@ The options to the ``encrypt`` command are described below.
    This option names the key list file. If not given, the default of
    ``m209keys.cfg`` is used.
 
-``-t`` or ``--file``
+``-f`` or ``--file``
    This option specifies the file that contains the text to encrypt. If the
    filename is given as ``-`` then input is read directly from ``stdin``. Note
    that either this option or the ``-t`` option must be specified, but not
@@ -173,15 +173,16 @@ The options to the ``encrypt`` command are described below.
 
 ``-e`` or ``--ext-ind``
    This option specifies the six-letter external message indicator, which is an
-   encryption parameter as explained in the 1944 manual (see the references).
-   Each letter must exist on the key wheels from left to right. If this option
-   is omitted, an external message indicator is chosen at random.
+   encryption parameter as explained in the 1944 manual (see
+   :ref:`references-label` [5] & [7]). Each letter must exist on the key wheels
+   from left to right. If this option is omitted, an external message indicator
+   is chosen at random.
 
 ``-s`` or ``--sys-ind``
    This option specifies the one-letter system indicator, which is an
-   encryption parameter as explained in the 1944 manual (see the references).
-   This must be a letter from ``A`` to ``Z``. If not given, one is chosen at
-   random.
+   encryption parameter as explained in the 1944 manual (see 
+   :ref:`references-label` [5] & [7]). This must be a letter from ``A`` to ``Z``.
+   If not given, one is chosen at random.
 
 .. NOTE:: 
 
@@ -226,7 +227,7 @@ on the ``decrypt`` command, type the following::
    $ m209 decrypt --help
    usage: m209 decrypt [-h] [-z KEY_FILE] [-f FILE] [-t TEXT]
 
-   Decyrpt text from a file or command-line
+   Decrypt text from a file or command-line
 
    optional arguments:
      -h, --help            show this help message and exit

@@ -242,7 +242,7 @@ def main(argv=None):
 
     # create the sub-parser for decrypt
     dec_parser = subparsers.add_parser('decrypt', aliases=['dec'],
-        description='Decyrpt text from a file or command-line',
+        description='Decrypt text from a file or command-line',
         help='decrypt text from file or command-line',
         epilog='Either the -f/--file or -t/--text arguments must be supplied')
     dec_parser.add_argument('-z', '--key-file', default=DEFAULT_KEY_LIST,
