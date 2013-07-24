@@ -52,8 +52,10 @@ Contents:
 Requirements
 ------------
 
-``m209`` is written in Python_, specifically Python 3.3. It has no other
-requirements or dependencies.
+``m209`` is written in Python_ 3, specifically Python 3.3. At this time it will
+not run on Python 2.x.
+
+``m209`` has no other requirements or dependencies.
 
 Installation
 ------------
@@ -65,8 +67,8 @@ You can install it using pip_::
    $ pip install m209                  # install
    $ pip install --upgrade m209        # upgrade
 
-You may also download a tarball or .zip file of the latest code by visiting the
-`m209 Bitbucket page`_. Alternatively if you use Mercurial_, you can clone the
+You may also download an archive file of the latest code by visiting the `m209
+Bitbucket page`_. Alternatively if you use Mercurial_, you can clone the
 repository with the following command::
 
    $ hg clone https://bitbucket.org/bgneal/m209
@@ -121,7 +123,6 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 
 

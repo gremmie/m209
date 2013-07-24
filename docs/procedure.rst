@@ -4,7 +4,7 @@ StdProcedure Class
 The ``StdProcedure`` class encapsulates the encrypting and decrypting
 procedures outlined in :ref:`references-label`. In particular, see
 references [5] and [7]. This class takes care of the high level details of
-inserted various message indicators into an encrypted message, and stripping
+inserting various message indicators into an encrypted message, and stripping
 them off during decrypt. These message indicators tell the recipient what key
 list and initial key wheel settings to use when configuring their M-209 for
 decrypt.

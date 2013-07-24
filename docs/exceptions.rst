@@ -11,13 +11,13 @@ The ``m209`` library defines an exception hierarchy, rooted at the
 
 .. class:: m209.drum.DrumError()
 
-   Inherits from :class:`~m209.M209Error`. This is an internal exception, used
-   to report drum related errors.
+   Inherits from :class:`~m209.M209Error`. This exception is used to report
+   drum related errors.
 
 .. class:: m209.key_wheel.KeyWheelError()
 
-   Inherits from :class:`~m209.M209Error`. This is an internal exception, used
-   to report key wheel related errors.
+   Inherits from :class:`~m209.M209Error`. This exception is used to report key
+   wheel related errors.
 
 .. class:: m209.keylist.generate.KeyListGenError()
 
