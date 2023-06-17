@@ -16,7 +16,7 @@ setup(
     url='https://bitbucket.org/bgneal/m209/',
     license='MIT',
     description='A historically accurate M-209 simulation library.',
-    long_description=open(join(dirname(__file__), 'README.txt')).read(),
+    long_description=open(join(dirname(__file__), 'README.rst'), encoding='utf-8').read(),
     packages=['m209', 'm209.tests', 'm209.keylist', 'm209.keylist.tests'],
     scripts=['scripts/m209'],
     classifiers = [
