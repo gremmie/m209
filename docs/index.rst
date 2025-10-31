@@ -9,10 +9,10 @@ Welcome to m209's documentation!
 :Author: Brian Neal <bgneal@gmail.com>
 :Version: |release|
 :Date: |today|
-:Home Page: https://bitbucket.org/bgneal/m209/
+:Home Page: https://github.com/gremmie/m209
 :License: MIT License (see LICENSE.txt)
 :Documentation: http://m209.readthedocs.org/
-:Support: https://bitbucket.org/bgneal/m209/issues
+:Support: https://github.com/gremmie/m209/issues
 
 Introduction
 ------------
@@ -67,17 +67,9 @@ You can install it using pip_::
    $ pip install m209                  # install
    $ pip install --upgrade m209        # upgrade
 
-You may also download an archive file of the latest code by visiting the `m209
-Bitbucket page`_. Alternatively if you use Mercurial_, you can clone the
-repository with the following command::
-
-   $ hg clone https://bitbucket.org/bgneal/m209
-
-If you did not use pip (you downloaded or cloned the code yourself), you can
-install with::
-
-   $ cd where-you-extracted-m209
-   $ python setup.py install
+Please note at the time of this update that the version on PyPI is a bit old
+and is in the process of being updated. The lastest version of ``m209`` can be
+found at the `m209 GitHub page`_.
 
 To run the unit tests::
 
@@ -87,7 +79,7 @@ To run the unit tests::
 Support & Source
 ----------------
 
-All support takes place at the `m209 Bitbucket page`_. Please enter any
+All support takes place at the `m209 GitHub page`_. Please enter any
 feature requests or bugs into the `issue tracker`_.
 
 .. _references-label:
@@ -130,7 +122,6 @@ Indices and tables
 .. _Boris Hagelin: http://en.wikipedia.org/wiki/Boris_Hagelin
 .. _Python: http://www.python.org
 .. _Python Package Index: http://pypi.python.org/pypi/m209/
-.. _m209 Bitbucket page: https://bitbucket.org/bgneal/m209
+.. _m209 GitHub page: https://github.com/gremmie/m209
 .. _pip: http://www.pip-installer.org
-.. _Mercurial: http://mercurial.selenic.com/
-.. _issue tracker: https://bitbucket.org/bgneal/m209/issues
+.. _issue tracker: https://github.com/gremmie/m209/issues

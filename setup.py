@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (C) 2013 by Brian Neal.
+# Copyright (C) 2013 - 2025 by Brian Neal.
 # This file is part of m209, the M-209 simulation.
 # m209 is released under the MIT License (see LICENSE.txt).
 
@@ -13,14 +13,14 @@ setup(
     version=m209.__version__,
     author='Brian Neal',
     author_email='bgneal@gmail.com',
-    url='https://bitbucket.org/bgneal/m209/',
+    url='https://github.com/gremmie/m209',
     license='MIT',
     description='A historically accurate M-209 simulation library.',
     long_description=open(join(dirname(__file__), 'README.rst'), encoding='utf-8').read(),
     packages=['m209', 'm209.tests', 'm209.keylist', 'm209.keylist.tests'],
     scripts=['scripts/m209'],
     classifiers = [
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
