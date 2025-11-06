@@ -4,13 +4,13 @@ m209
 A historically accurate M-209 library written in Python 3
 ---------------------------------------------------------
 
-:Author: Brian Neal <bgneal@gmail.com>
-:Version: 0.1.1
-:Date: October 31, 2025
-:Home Page: https://github.com/gremmie/m209
-:License: MIT License (see LICENSE.txt)
-:Documentation: https://m209.readthedocs.org
-:Support: https://github.com/gremmie/m209/issues
+- **Author:** Brian Neal <bgneal@gmail.com>
+- **Version:** 1.0.0
+- **Date:** November 6, 2025
+- **Home Page:** https://github.com/gremmie/m209
+- **License:** MIT License (see LICENSE.txt)
+- **Documentation:** https://m209.readthedocs.org
+- **Support:** https://github.com/gremmie/m209/issues
 
 The `M-209`_ is a mechanical cipher machine used by the US military during World
 War II and up to the Korean War. The M-209 is also known as the CSP-1500 by

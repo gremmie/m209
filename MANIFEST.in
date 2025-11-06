@@ -1,4 +1,0 @@
-include *.txt
-recursive-include examples *
-recursive-include docs *.rst *.py *.txt *.bat Makefile
-prune docs/_build
