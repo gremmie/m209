@@ -64,12 +64,12 @@ Installation
 
 You can install it using pip_::
 
-   $ pip install m209                  # install
-   $ pip install --upgrade m209        # upgrade
+   $ python3 -m pip install m209
 
-Please note at the time of this update that the version on PyPI is a bit old
-and is in the process of being updated. The lastest version of ``m209`` can be
-found at the `m209 GitHub page`_.
+If you aren't familiar with installing Python packages, please see, for
+example, the `Python Packaging Installing Packages tutorial`_.
+
+The latest version of ``m209`` can always be found at the `m209 GitHub page`_.
 
 To run the unit tests::
 
@@ -122,6 +122,7 @@ Indices and tables
 .. _Boris Hagelin: http://en.wikipedia.org/wiki/Boris_Hagelin
 .. _Python: http://www.python.org
 .. _Python Package Index: http://pypi.python.org/pypi/m209/
+.. _Python Packaging Installing Packages tutorial: https://packaging.python.org/en/latest/tutorials/installing-packages/
 .. _m209 GitHub page: https://github.com/gremmie/m209
 .. _pip: http://www.pip-installer.org
 .. _issue tracker: https://github.com/gremmie/m209/issues
