@@ -95,21 +95,15 @@ film was also highly instructive.
 #. `M-209 at Wikipedia <http://en.wikipedia.org/wiki/M-209>`_
 #. `Mark J. Blair's Converter M-209-B <http://www.nf6x.net/2009/02/converter-m-209-b/>`_
 #. `1942 M-209 Manual <http://maritime.org/tech/csp1500inst.htm>`_
-#. `1944 M-209 Manual <http://www.ilord.com/m209manual.html>`_
 #. `Official M-209 Training Film <http://www.youtube.com/playlist?list=PLCPgncK_sTnEny2-uoTV-1_GC72zo-vKq>`_ - This is a 4 video YouTube playlist of an actual 1940's era US War Department training film. Demonstrates the M-209 and operational procedures. Very interesting!
 #. `Transcript of Training Film <http://www.ilord.com/m209-training.html>`_ -
    Transcript of the above film.
-#. `Mark J. Blair's M-209 Cipher Machine Group <http://www.nf6x.net/groups/m209group/>`_ -
-   Informal club for M-209 enthusiasts. Includes detailed explanations of the
-   device and how to use it. Very useful.
-#. `Dirk Rijmenants' M-209 Simulator <http://users.telenet.be/d.rijmenants/en/m209sim.htm>`_ -
+#. `Dirk Rijmenants' M-209 Simulator <https://www.ciphermachinesandcryptology.com/en/m209sim.htm>`_ -
    Graphical M-209 simulator
-#. `Mark J. Blair's Hagelin project suite at GitHub <https://github.com/NF6X/hagelin>`_
+#. `Mark J. Blair's Hagelin project suite at GitHub <https://gitlab.com/NF6X_Crypto/hagelin>`_
    - M-209 simulator written in C++
 #. `Jean-François Bouchaudy's Crypto Pages <http://www.jfbouch.fr/crypto/>`_
    - Includes another Python-based M-209 simulator and a M-209 challenge. In French.
-#. `The C-38 / M-209 Cipher Machine <http://hem.passagen.se/tan01/c38.html>`_
-   - Another M-209 page. This one has useful info on creating key lists and a C-38 simulator written in C.
 
 Indices and tables
 ==================

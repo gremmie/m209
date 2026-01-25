@@ -26,4 +26,4 @@ references.
 
 .. _M-209: http://en.wikipedia.org/wiki/M-209
 .. _Boris Hagelin: http://en.wikipedia.org/wiki/Boris_Hagelin
-.. _documentation: https://m209.readthedocs.org
+.. _documentation: https://m209.readthedocs.io
